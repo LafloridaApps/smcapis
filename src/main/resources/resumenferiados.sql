@@ -1,0 +1,1 @@
+exec ppefuncdiasferiados :ident, :rut, :rut, :currentYear, :currentMonth
