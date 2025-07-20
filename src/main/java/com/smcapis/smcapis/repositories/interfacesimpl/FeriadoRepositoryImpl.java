@@ -2,9 +2,9 @@ package com.smcapis.smcapis.repositories.interfacesimpl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -30,14 +30,15 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
     private final String sql;
     private final String sqlDetalle;
 
-    public FeriadoRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public FeriadoRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate, ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
-            this.sql = new String(Files.readAllBytes(Paths.get("src/main/resources/resumenferiados.sql")),
-                    StandardCharsets.UTF_8);
-            this.sqlDetalle = new String(Files.readAllBytes(Paths.get("src/main/resources/detalleferiado.sql")),
-                    StandardCharsets.UTF_8);
+
+            Resource resourceRes = resourceLoader.getResource("classpath:resumenferiados.sql");
+            Resource resourceDetalle = resourceLoader.getResource("classpath:detalleferiado.sql");
+            this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            this.sqlDetalle = new String(resourceDetalle.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
         }

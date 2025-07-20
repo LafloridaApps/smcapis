@@ -2,11 +2,11 @@ package com.smcapis.smcapis.repositories.interfacesimpl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,16 +24,18 @@ public class FuncionarioRepositoryImpl implements FuncionarioRespository {
 
     private final String sql;
 
-    public FuncionarioRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+      public FuncionarioRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate, ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
-            this.sql = new String(Files.readAllBytes(Paths.get("src/main/resources/funcionario.sql")),
-                    StandardCharsets.UTF_8);
+            Resource resource = resourceLoader.getResource("classpath:funcionario.sql");
+            this.sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
         }
     }
+
+   
 
     @Override
     public FuncionarioDto getFuncionario(Integer rut) {
