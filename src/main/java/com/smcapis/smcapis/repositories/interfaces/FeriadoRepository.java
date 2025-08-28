@@ -2,13 +2,13 @@ package com.smcapis.smcapis.repositories.interfaces;
 
 import java.util.List;
 
-import com.smcapis.smcapis.dto.DetalleFeriado;
-import com.smcapis.smcapis.dto.ResumenFeriado;
+import com.smcapis.smcapis.dto.DetalleFeriadoLegal;
+import com.smcapis.smcapis.dto.ResumenFeriadoLegal;
 
 public interface FeriadoRepository {
 
-    List<ResumenFeriado> getFeriadoByRutAndIdent(Integer rut, Integer ident);
+    List<ResumenFeriadoLegal> getFeriadoByRutAndIdent(Integer rut, Integer ident);
 
-    List<DetalleFeriado> getDetalleFeriadoByRutAndIdent(Integer rut, Integer ident);
+    List<DetalleFeriadoLegal> getDetalleFeriadoByRutAndIdent(Integer rut, Integer ident);
 
 }

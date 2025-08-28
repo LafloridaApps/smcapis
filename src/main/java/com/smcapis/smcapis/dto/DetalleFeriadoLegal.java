@@ -2,7 +2,7 @@ package com.smcapis.smcapis.dto;
 
 import java.time.LocalDate;
 
-public class DetalleFeriado {
+public class DetalleFeriadoLegal {
 
     private Integer numero;
     private String resolucion;

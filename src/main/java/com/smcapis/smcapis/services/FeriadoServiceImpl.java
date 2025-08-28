@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.smcapis.smcapis.dto.DetalleFeriado;
-import com.smcapis.smcapis.dto.ResumenFeriado;
+import com.smcapis.smcapis.dto.DetalleFeriadoLegal;
+import com.smcapis.smcapis.dto.ResumenFeriadoLegal;
 import com.smcapis.smcapis.repositories.interfaces.FeriadoRepository;
 import com.smcapis.smcapis.services.interfaces.FeriadosService;
 
@@ -20,13 +20,13 @@ public class FeriadoServiceImpl implements FeriadosService {
     }
 
     @Override
-    public ResumenFeriado getFeriadoByRutAndIdent(Integer rut, Integer ident) {
+    public ResumenFeriadoLegal getFeriadoByRutAndIdent(Integer rut, Integer ident) {
 
-        ResumenFeriado resumenFeriado = feriadoRepository.getFeriadoByRutAndIdent(rut, ident)
+        ResumenFeriadoLegal resumenFeriado = feriadoRepository.getFeriadoByRutAndIdent(rut, ident)
                 .stream()
                 .filter(r -> r.getAnio() == Year.now().getValue())
                 .findFirst()
-                .orElse( new ResumenFeriado());
+                .orElse( new ResumenFeriadoLegal());
 
         resumenFeriado.setDetalle(getDetalleFeriadoByRutAndIdent(rut, ident));
 
@@ -34,7 +34,7 @@ public class FeriadoServiceImpl implements FeriadosService {
 
     }
 
-    private List<DetalleFeriado> getDetalleFeriadoByRutAndIdent(Integer rut, Integer ident) {
+    private List<DetalleFeriadoLegal> getDetalleFeriadoByRutAndIdent(Integer rut, Integer ident) {
 
         return feriadoRepository.getDetalleFeriadoByRutAndIdent(rut, ident);
 

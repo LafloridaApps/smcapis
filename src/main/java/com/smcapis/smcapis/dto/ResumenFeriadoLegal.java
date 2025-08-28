@@ -2,7 +2,7 @@ package com.smcapis.smcapis.dto;
 
 import java.util.List;
 
-public class ResumenFeriado {
+public class ResumenFeriadoLegal {
 
     private Integer anio;
     private int diasCorresponden;
@@ -11,7 +11,7 @@ public class ResumenFeriado {
     private int diasTomados;
     private int diasPerdidos;
     private int diasPendientes;
-    private List<DetalleFeriado>  detalle;
+    private List<DetalleFeriadoLegal>  detalle;
 
     
 
@@ -71,11 +71,11 @@ public class ResumenFeriado {
         this.diasPendientes = diasPendientes;
     }
 
-    public List<DetalleFeriado> getDetalle() {
+    public List<DetalleFeriadoLegal> getDetalle() {
         return detalle;
     }
 
-    public void setDetalle(List<DetalleFeriado> detalle) {
+    public void setDetalle(List<DetalleFeriadoLegal> detalle) {
         this.detalle = detalle;
     }
 

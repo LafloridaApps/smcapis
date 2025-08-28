@@ -10,8 +10,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.smcapis.smcapis.dto.DetalleFeriado;
-import com.smcapis.smcapis.dto.ResumenFeriado;
+import com.smcapis.smcapis.dto.DetalleFeriadoLegal;
+import com.smcapis.smcapis.dto.ResumenFeriadoLegal;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.expections.RecursoNoEncontradoException;
 import com.smcapis.smcapis.repositories.interfaces.FeriadoRepository;
@@ -45,7 +45,7 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
     }
 
     @Override
-    public List<ResumenFeriado> getFeriadoByRutAndIdent(Integer rut, Integer ident) {
+    public List<ResumenFeriadoLegal> getFeriadoByRutAndIdent(Integer rut, Integer ident) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
         params.addValue("ident", ident);
@@ -62,9 +62,9 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
         }
     }
 
-    private ResumenFeriado mapToResumenDFeriado(ResultSet rs, int rowNum) throws SQLException {
+    private ResumenFeriadoLegal mapToResumenDFeriado(ResultSet rs, int rowNum) throws SQLException {
 
-        ResumenFeriado resumenFeriado = new ResumenFeriado();
+        ResumenFeriadoLegal resumenFeriado = new ResumenFeriadoLegal();
 
         resumenFeriado.setAnio(rs.getInt("ano"));
         resumenFeriado.setDiasCorresponden(rs.getInt("corresponde"));
@@ -77,7 +77,7 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
     }
 
     @Override
-    public List<DetalleFeriado> getDetalleFeriadoByRutAndIdent(Integer rut, Integer ident) {
+    public List<DetalleFeriadoLegal> getDetalleFeriadoByRutAndIdent(Integer rut, Integer ident) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
         params.addValue("ident", ident);
@@ -93,8 +93,8 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
         }
     }
 
-    private DetalleFeriado mapToDetalleFeriado(ResultSet rs, int rowNum) throws SQLException {
-        DetalleFeriado detalleAdm = new DetalleFeriado();
+    private DetalleFeriadoLegal mapToDetalleFeriado(ResultSet rs, int rowNum) throws SQLException {
+        DetalleFeriadoLegal detalleAdm = new DetalleFeriadoLegal();
         detalleAdm.setNumero(rs.getInt("numero"));
         detalleAdm.setResolucion(rs.getString("resolucion"));
         detalleAdm.setFechaResolucion(rs.getDate("fechaResolucion").toLocalDate());

@@ -12,8 +12,15 @@ public class FuncionarioDto {
     private String foto;
     private String departamento;
     private Integer ident;
+    private String tipoContrato;
 
-    
+    public String getTipoContrato() {
+        return tipoContrato;
+    }
+
+    public void setTipoContrato(String tipoContrato) {
+        this.tipoContrato = tipoContrato;
+    }
 
     public Integer getRut() {
         return rut;
