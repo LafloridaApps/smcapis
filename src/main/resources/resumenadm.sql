@@ -9,7 +9,7 @@ WITH AbsenceDetails AS (
             WHEN CAST(a.fechainicio AS DATE) = CAST(a.fechatermino AS DATE) THEN
                 CASE 
                     WHEN DATENAME(weekday, a.fechainicio) NOT IN ('Saturday', 'Sunday', 'Sábado', 'Domingo')
-                         AND CAST(a.fechainicio AS DATE) NOT IN (SELECT fecha_feriado FROM feriados) THEN
+                         AND CAST(a.fechainicio AS DATE) NOT IN (SELECT feriado FROM feriados) THEN
                         CASE
                             WHEN CAST(a.fechatermino AS TIME) = '00:00:00' THEN 1.0
                             WHEN CAST(a.fechatermino AS TIME) IN ('12:00:00', '17:30:00') THEN 0.5
