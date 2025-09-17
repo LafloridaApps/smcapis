@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Year;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
@@ -27,8 +28,10 @@ public class AdministrativoRepositoryImpl implements AdministrativoRepository {
 
     private final String sql;
     private final String sqlDetalle;
+    private final Integer anio;
 
-    public AdministrativoRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate, ResourceLoader resourceLoader) {
+    public AdministrativoRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+            ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
@@ -37,13 +40,11 @@ public class AdministrativoRepositoryImpl implements AdministrativoRepository {
             Resource resourceDetalle = resourceLoader.getResource("classpath:detalleadm.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             this.sqlDetalle = new String(resourceDetalle.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            this.anio = Year.now().getValue();
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
         }
     }
-
-
-     
 
     @Override
     @Transactional
@@ -52,6 +53,7 @@ public class AdministrativoRepositoryImpl implements AdministrativoRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
         params.addValue("ident", ident);
+        params.addValue("anio", anio);
 
         try {
             return namedParameterJdbcTemplate.queryForObject(sql,
@@ -68,10 +70,12 @@ public class AdministrativoRepositoryImpl implements AdministrativoRepository {
 
         ResumenAdm resumenAdm = new ResumenAdm();
 
-        resumenAdm.setAnio(rs.getInt("anio"));
-        resumenAdm.setMaximo(rs.getDouble("cantidad_adm"));
-        resumenAdm.setUsados(rs.getDouble("total_dias_ausencia"));
-        resumenAdm.setSaldo(rs.getDouble("saldo"));
+        resumenAdm.setAnio(anio);
+        resumenAdm.setMaximo(rs.getDouble("maximodiasadm"));
+        resumenAdm.setUsados(rs.getDouble("diasusados"));
+
+        double saldo = resumenAdm.getMaximo() - resumenAdm.getUsados();
+        resumenAdm.setSaldo(saldo);
 
         return resumenAdm;
 
