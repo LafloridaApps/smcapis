@@ -13,6 +13,24 @@ public class FuncionarioDto {
     private String departamento;
     private Integer ident;
     private String tipoContrato;
+    private String escalafon;
+    private int grado;
+
+    public String getEscalafon() {
+        return escalafon;
+    }
+
+    public void setEscalafon(String escalafon) {
+        this.escalafon = escalafon;
+    }
+
+    public int getGrado() {
+        return grado;
+    }
+
+    public void setGrado(int grado) {
+        this.grado = grado;
+    }
 
     public String getTipoContrato() {
         return tipoContrato;

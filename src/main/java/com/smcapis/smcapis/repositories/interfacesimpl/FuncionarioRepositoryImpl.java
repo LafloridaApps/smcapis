@@ -66,6 +66,8 @@ public class FuncionarioRepositoryImpl implements FuncionarioRespository {
         funcionarioDto.setCodDeptoExt(rs.getString("coddepto"));
         funcionarioDto.setIdent(rs.getInt("ident"));
         funcionarioDto.setTipoContrato(rs.getString("tipocontrato"));
+        funcionarioDto.setEscalafon(rs.getString("nombreescalafon"));
+        funcionarioDto.setGrado(rs.getInt("grado"));
 
         byte[] imageBytes = rs.getBytes("foto");
         funcionarioDto.setFoto(imageBytes != null ? FotoUtils.fotoConverter(imageBytes) : " ");
