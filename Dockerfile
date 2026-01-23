@@ -6,6 +6,7 @@ WORKDIR /app
 # Esto permite que Docker cachee las librerías si el pom.xml no cambia
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
+RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline
 
 # Ahora copiamos el código fuente y compilamos el proyecto
