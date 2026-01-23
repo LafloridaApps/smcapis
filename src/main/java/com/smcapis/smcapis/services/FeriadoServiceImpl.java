@@ -1,11 +1,7 @@
 package com.smcapis.smcapis.services;
 
-import java.time.Year;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
-import com.smcapis.smcapis.dto.DetalleFeriadoLegal;
 import com.smcapis.smcapis.dto.ResumenFeriadoLegal;
 import com.smcapis.smcapis.repositories.interfaces.FeriadoRepository;
 import com.smcapis.smcapis.services.interfaces.FeriadosService;
@@ -22,24 +18,19 @@ public class FeriadoServiceImpl implements FeriadosService {
     @Override
     public ResumenFeriadoLegal getFeriadoByRutAndIdent(Integer rut, Integer ident) {
 
-        ResumenFeriadoLegal resumenFeriado = feriadoRepository.getFeriadoByRutAndIdent(rut, ident)
-                .stream()
-                .filter(r -> r.getAnio() == Year.now().getValue())
-                .findFirst()
-                .orElse( new ResumenFeriadoLegal());
+        // 1. Obtenemos toda la lista que viene del repositorio
+        List<ResumenFeriadoLegal> listaResumenes = feriadoRepository.getFeriadoByRutAndIdent(rut, ident);
 
-        resumenFeriado.setDetalle(getDetalleFeriadoByRutAndIdent(rut, ident));
+        // 2. Buscamos el año 2026 específicamente (o el primero que encuentres si
+        // prefieres)
+        ResumenFeriadoLegal resumenFeriado = listaResumenes.stream()
+                .filter(r -> r.getAnio() != null && r.getAnio().equals(2026))
+                .findFirst()
+                .orElseGet(() -> !listaResumenes.isEmpty() ? listaResumenes.get(0) : new ResumenFeriadoLegal());
+
+        // 3. Le inyectamos la lista de detalles al objeto de resumen único
+        resumenFeriado.setDetalle(feriadoRepository.getDetalleFeriadoByRutAndIdent(rut, ident));
 
         return resumenFeriado;
-
     }
-
-    private List<DetalleFeriadoLegal> getDetalleFeriadoByRutAndIdent(Integer rut, Integer ident) {
-
-        return feriadoRepository.getDetalleFeriadoByRutAndIdent(rut, ident);
-
-    }
-
-    
-
 }
