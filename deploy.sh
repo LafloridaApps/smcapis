@@ -3,8 +3,8 @@
 # =========================================================
 # CONFIGURACIÓN DEL MICROSERVICIO (Actualizado a GHCR)
 # =========================================================
-NOMBRE_APP="smc-apis"
-PUERTO="8084"
+NOMBRE_APP="smcapis"
+PUERTO="8083"
 # Cambiamos la ruta de Docker Hub a GitHub Container Registry
 IMAGEN_HUB="ghcr.io/lafloridaapps/smcapis"
 # =========================================================
@@ -35,7 +35,7 @@ docker run \
            --restart always \
            -d -p ${PUERTO}:${PUERTO} \
            --env-file .env \
-           --network appx \
+           --network laflorida \
            --add-host=host.docker.internal:host-gateway \
            --name ${NOMBRE_APP}-container \
            $TARGET_IMAGE
