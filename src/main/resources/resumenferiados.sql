@@ -1,1 +1,1 @@
-exec ppediasferiados :ident, :rut,2026,'31/01/2026'
+exec ppediasferiados :ident, :rut,:anio,:fecha

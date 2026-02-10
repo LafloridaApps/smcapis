@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +47,8 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
         params.addValue("ident", ident);
-        params.addValue("currentYear", 2026);
+        params.addValue("anio", Year.now().getValue());
+        params.addValue("fecha", formatearFecha());
 
         try {
             return namedParameterJdbcTemplate.query(sql, params, rs -> {
@@ -69,12 +74,13 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
             fallback.setAnio(2026);
             fallback.setDiasCorresponden(25);
             fallback.setDiasPendientes(25);
-            
-            // El resto queda en 0 por defecto si son tipos primitivos o se setean explícitamente
+
+            // El resto queda en 0 por defecto si son tipos primitivos o se setean
+            // explícitamente
             fallback.setDiasTomados(0);
             fallback.setDiasAcumulados(0);
             fallback.setDiasPerdidos(0);
-            fallback.setTotal(25); 
+            fallback.setTotal(25);
 
             return Collections.singletonList(fallback);
         }
@@ -96,10 +102,30 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
         DetalleFeriadoLegal detalle = new DetalleFeriadoLegal();
         detalle.setNumero(rs.getInt("numero"));
         detalle.setResolucion(rs.getString("resolucion"));
-        if (rs.getDate("fechaResolucion") != null) detalle.setFechaResolucion(rs.getDate("fechaResolucion").toLocalDate());
-        if (rs.getDate("fechaInicio") != null) detalle.setFechaInicio(rs.getDate("fechaInicio").toLocalDate());
-        if (rs.getDate("fechaTermino") != null) detalle.setFechaTermino(rs.getDate("fechaTermino").toLocalDate());
+        if (rs.getDate("fechaResolucion") != null)
+            detalle.setFechaResolucion(rs.getDate("fechaResolucion").toLocalDate());
+        if (rs.getDate("fechaInicio") != null)
+            detalle.setFechaInicio(rs.getDate("fechaInicio").toLocalDate());
+        if (rs.getDate("fechaTermino") != null)
+            detalle.setFechaTermino(rs.getDate("fechaTermino").toLocalDate());
         detalle.setPeriodo(rs.getDouble("periodo"));
         return detalle;
+    }
+
+    private String formatearFecha() {
+
+        LocalDate ulitmoDia = ulitmoDiaMesActual();
+
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd-MM-yyy");
+
+        return ulitmoDia.format(formatoFecha);
+    }
+
+    private LocalDate ulitmoDiaMesActual() {
+
+        LocalDate hoy = LocalDate.now();
+
+        return hoy.with(TemporalAdjusters.lastDayOfMonth());
+
     }
 }
