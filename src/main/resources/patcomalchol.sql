@@ -15,4 +15,4 @@ from
 where
     negocios.clave = 4
     and FECHATERMINONEG is null
-    and parnegocio.rut =: rut
+    and parnegocio.rut = :rut

@@ -75,4 +75,4 @@ WHERE
         contratos.fechafin IS NULL
         OR contratos.fechafin >= CONVERT(date, GETDATE(), 104)
     )
-    AND contratos.RUT =: rut
+    AND contratos.RUT = :rut

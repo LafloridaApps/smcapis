@@ -1,4 +1,4 @@
-exec ppediasadmin: ident,
-: rut,
-: rut,
-: anio
+exec ppediasadmin :ident,
+:rut,
+:rut,
+:anio

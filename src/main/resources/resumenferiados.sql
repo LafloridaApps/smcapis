@@ -1,4 +1,4 @@
-exec ppediasferiados: ident,
-: rut,
-: anio,
-: fecha
+exec ppediasferiados :ident,
+:rut,
+:anio,
+:fecha

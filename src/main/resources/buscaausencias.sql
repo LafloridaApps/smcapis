@@ -8,10 +8,10 @@ FROM
      peausencias a
      inner join PETIPOSAUSENCIA p on p.CODTIPOAUSENCIA = a.CODTIPOAUSENCIA
 WHERE
-     rut =: rut
-     AND ident =: ident
-     AND fechainicio <=: fechaFin
-     AND fechatermino >=: fechaInicio
+     rut = :rut
+     AND ident = :ident
+     AND fechainicio <= :fechaFin
+     AND fechatermino >= :fechaInicio
 union all
 select
      rut,
@@ -22,7 +22,7 @@ select
 from
      LMLICENCIAS
 where
-     rut =: rut
-     and ident =: ident
-     and FECHAINI between: fechaInicio
-     and: fechaFin
+     rut = :rut
+     and ident = :ident
+     and FECHAINI between :fechaInicio
+     and :fechaFin

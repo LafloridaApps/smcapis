@@ -31,8 +31,8 @@ SELECT
 FROM
     PEAUSENCIAS a
 WHERE
-    a.rut =: rut
-    AND a.ident =: ident
+    a.rut = :rut
+    AND a.ident = :ident
     AND a.CODTIPOAUSENCIA = 2
     AND a.fechainicio <= a.fechatermino
 ORDER BY
