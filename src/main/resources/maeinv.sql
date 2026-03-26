@@ -1,0 +1,44 @@
+select
+    maestro.coddocaf,
+    maestro.numerodocaf,
+    maestro.anodocaf,
+    altas.rut,
+    altas.NROORDEN,
+    altas.FECHAORDEN,
+    altas.NROFACTURA,
+    altas.FECHAFACTURA,
+    maestro.codgrupoart,
+    maestro.codsubgrupoart,
+    maestro.codrubroart,
+    maestro.codart,
+    maestro.codinv,
+    maestro.vutilinv,
+    maestro.valorinv,
+    doc.fechadocaf,
+    doc.depto,
+    deptos.nombre_departamento,
+    deptos.jefe_departamento,
+    o.nombreoficina,
+    o.responsableoficina,
+    o.cargooficina
+from
+    AFALTAS altas
+    inner join AFMAEINV maestro on altas.IDADQUIS = maestro.IDADQUIS
+    and altas.ANODOCAF = maestro.ANODOCAF
+    and altas.CODDOCAF = maestro.CODDOCAF
+    and altas.NUMERODOCAF = maestro.NUMERODOCAF
+    inner join AFDOCAF doc on altas.idadquis = doc.idadquis
+    and altas.anodocaf = doc.anodocaf
+    and altas.coddocaf = doc.coddocaf
+    and altas.numerodocaf = doc.numerodocaf
+    and altas.numerodocaf = doc.numerodocaf
+    inner join DEPARTAMENTOS deptos on doc.DEPTO = deptos.DEPTO
+    inner join AFOFICINAS o ON doc.LINOFICINA = o.LINOFICINA
+    and deptos.depto = o.depto
+where
+    altas.IDADQUIS = 1
+    and maestro.codgrupoart = :codgrupoart
+    and maestro.codsubgrupoart = :codsubgrupoart
+    and maestro.codrubroart = :codrubroart
+    and maestro.codart = :codart
+    and maestro.codinv = :codinv
