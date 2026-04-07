@@ -1,5 +1,6 @@
 package com.smcapis.smcapis.controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,21 @@ public class InventarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
+    }
+
+    @GetMapping("/depto")
+    public ResponseEntity<Object> getArticuloByDepto(@RequestParam String depto) {
+        try {
+            List<ArticuloResponse> response = inventarioService.getArticuloByDepto(depto);
+            if (response.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(Map.of("message", "no se encontraron registros"));
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 }

@@ -32,7 +32,6 @@ from
     and altas.anodocaf = doc.anodocaf
     and altas.coddocaf = doc.coddocaf
     and altas.numerodocaf = doc.numerodocaf
-    and altas.numerodocaf = doc.numerodocaf
     inner join DEPARTAMENTOS deptos on doc.DEPTO = deptos.DEPTO
     left join AFOFICINAS o ON doc.LINOFICINA = o.LINOFICINA
     and deptos.depto = o.depto
@@ -42,9 +41,4 @@ from
     and art.codrubroart = maestro.codrubroart
     and art.codart = maestro.codart
 where
-    altas.IDADQUIS = 1
-    and maestro.codgrupoart = :codgrupoart
-    and maestro.codsubgrupoart = :codsubgrupoart
-    and maestro.codrubroart = :codrubroart
-    and maestro.codart = :codart
-    and maestro.codinv = :codinv
+    maestro.idadquis = 1 and deptos.depto  like :depto

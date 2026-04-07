@@ -1,5 +1,7 @@
 package com.smcapis.smcapis.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.smcapis.smcapis.dto.ArticuloResponse;
@@ -18,6 +20,11 @@ public class InventarioServiceImpl implements InventarioService {
     @Override
     public ArticuloResponse getArticuloByCodigo(String codigo, Integer correlativo) {
         return maeInvRepository.getArticuloByCodigoInv(codigo, correlativo);
+    }
+
+    @Override
+    public List<ArticuloResponse> getArticuloByDepto(String depto) {
+        return maeInvRepository.getArticuloByDepto(depto);
     }
 
 }

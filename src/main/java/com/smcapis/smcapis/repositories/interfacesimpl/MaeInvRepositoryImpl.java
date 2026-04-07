@@ -2,6 +2,8 @@ package com.smcapis.smcapis.repositories.interfacesimpl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.io.ResourceLoader;
@@ -24,6 +26,7 @@ public class MaeInvRepositoryImpl implements MaeInvRepository {
     private final ArticuloMapper articuloMapper;
 
     private final String sql;
+    private final String sqlDepto;
 
     public MaeInvRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
             ResourceLoader resourceLoader, ArticuloMapper articuloMapper) {
@@ -33,7 +36,9 @@ public class MaeInvRepositoryImpl implements MaeInvRepository {
         try {
 
             Resource resourceRes = resourceLoader.getResource("classpath:maeinv.sql");
+            Resource resourceDepto = resourceLoader.getResource("classpath:maestroinvdepto.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            this.sqlDepto = new String(resourceDepto.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
@@ -59,6 +64,24 @@ public class MaeInvRepositoryImpl implements MaeInvRepository {
 
             return null;
         }
+    }
+
+    @Override
+    public List<ArticuloResponse> getArticuloByDepto(String depto) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("depto", depto);
+
+        try {
+
+            return namedParameterJdbcTemplate.query(sqlDepto,
+                    params,
+                    articuloMapper::mapToArticuloResponse);
+
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<>();
+        }
+
     }
 
 }

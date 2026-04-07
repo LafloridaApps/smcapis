@@ -30,6 +30,10 @@ public class UtilsHelper {
 
     public static LocalDate formatFecha(String fecha) {
 
+        if(fecha == null){
+            return null;
+        }
+
         String formatFecha = fecha.substring(0, 10);
 
         return LocalDate.parse(formatFecha);

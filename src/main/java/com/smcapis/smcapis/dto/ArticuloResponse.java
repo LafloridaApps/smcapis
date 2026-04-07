@@ -27,6 +27,7 @@ public record ArticuloResponse(
         String nombreOficina,
         String responsable,
         String cargo,
+        String nombreArticulo,
         List<ArticuloDatosAdicionales> datosAdicionales
 
 ) {

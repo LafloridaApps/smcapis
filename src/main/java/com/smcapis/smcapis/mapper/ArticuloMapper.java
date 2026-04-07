@@ -57,6 +57,7 @@ public class ArticuloMapper {
                 rs.getString("nombreoficina"),
                 rs.getString("responsableoficina"),
                 rs.getString("cargooficina"),
+                rs.getString("nombreart"),
                 adicionales
 
         );
