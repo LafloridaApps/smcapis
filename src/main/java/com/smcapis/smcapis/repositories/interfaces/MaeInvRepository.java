@@ -8,6 +8,6 @@ public interface MaeInvRepository {
 
     ArticuloResponse getArticuloByCodigoInv(String codart, Integer codinv);
 
-    List<ArticuloResponse> getArticuloByDepto(String depto);
+    List<ArticuloResponse> getArticuloByDepto(String depto, Integer linoficina);
 
 }

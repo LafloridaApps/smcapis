@@ -21,6 +21,7 @@ select
     o.nombreoficina,
     o.responsableoficina,
     o.cargooficina,
+    o.linoficina,
     art.nombreart
 from
     AFALTAS altas

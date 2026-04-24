@@ -18,6 +18,7 @@ import com.smcapis.smcapis.services.interfaces.InventarioService;
 public class InventarioController {
 
     private final InventarioService inventarioService;
+    private static final String KEY_VALUE = "message";
 
     public InventarioController(InventarioService inventarioService) {
         this.inventarioService = inventarioService;
@@ -31,7 +32,7 @@ public class InventarioController {
             ArticuloResponse response = inventarioService.getArticuloByCodigo(codigo, correlativo);
             if (response == null) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(Map.of("message", "no se encontraron registros"));
+                        .body(Map.of(KEY_VALUE, "no se encontraron registros"));
             }
             return ResponseEntity.status(HttpStatus.OK).body(response);
 
@@ -42,18 +43,29 @@ public class InventarioController {
     }
 
     @GetMapping("/depto")
-    public ResponseEntity<Object> getArticuloByDepto(@RequestParam String depto) {
+    public ResponseEntity<Object> getArticuloByDepto(
+            @RequestParam(required = true) String depto,
+            @RequestParam(required = false) Integer linoficina) {
         try {
-            List<ArticuloResponse> response = inventarioService.getArticuloByDepto(depto);
+            List<ArticuloResponse> response = inventarioService.getArticuloByDepto(depto, linoficina);
             if (response.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(Map.of("message", "no se encontraron registros"));
+                        .body(Map.of(KEY_VALUE, "no se encontraron registros"));
             }
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/oficinas")
+    public ResponseEntity<Object> getOficinasByCodigoDepto(@RequestParam String depto) {
+        if (depto == null || depto.isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of(KEY_VALUE, "no existen departamentos"));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(inventarioService.getOficinasByCodigoDepto(depto));
     }
 
 }

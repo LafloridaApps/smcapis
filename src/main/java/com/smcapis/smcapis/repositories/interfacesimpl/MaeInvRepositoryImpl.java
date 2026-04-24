@@ -67,14 +67,23 @@ public class MaeInvRepositoryImpl implements MaeInvRepository {
     }
 
     @Override
-    public List<ArticuloResponse> getArticuloByDepto(String depto) {
+    public List<ArticuloResponse> getArticuloByDepto(String depto, Integer linoficina) {
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("depto", depto);
 
+        String executeSql = sqlDepto;
+        if (linoficina == null) {
+            executeSql = executeSql.concat(" and o.linoficina  is null");
+
+        } else {
+            executeSql = executeSql.concat(" and o.linoficina = :linoficina");
+            params.addValue("linoficina", linoficina);
+        }
+
         try {
 
-            return namedParameterJdbcTemplate.query(sqlDepto,
+            return namedParameterJdbcTemplate.query(executeSql,
                     params,
                     articuloMapper::mapToArticuloResponse);
 

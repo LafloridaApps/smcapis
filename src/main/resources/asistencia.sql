@@ -1,0 +1,1 @@
+PPEAsistencia :ident, :fechaInicio, :fechaFin, :rut, :rut, 0, 0, 0
