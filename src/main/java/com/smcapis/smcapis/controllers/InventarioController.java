@@ -18,6 +18,7 @@ import com.smcapis.smcapis.services.interfaces.InventarioService;
 public class InventarioController {
 
     private final InventarioService inventarioService;
+
     private static final String KEY_VALUE = "message";
 
     public InventarioController(InventarioService inventarioService) {

@@ -76,7 +76,7 @@ public class AsistenciaRepositoryImpl implements AsistenciaRepository {
                 .hext25(rs.getString("hext25"))
                 .hext50(rs.getString("hext50"))
                 .justinasautext(rs.getString("justinas_autext"))
-                .hatr(rs.getString("hatr"))
+                .hatr(rs.getString("hatrmm"))
                 .build();
 
     }
