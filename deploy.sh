@@ -9,37 +9,12 @@ PUERTO="8083"
 IMAGEN_HUB="ghcr.io/lafloridaapps/smcapis"
 # =========================================================
 
-OPCION=${1:-"dev"}
 
-case $OPCION in
-    "prod")
-        echo "--- MODO PRODUCCIÓN: Bajando de GitHub Packages ($IMAGEN_HUB) ---"
-        # Ahora el pull se hace desde el registro privado de GitHub
-        docker pull $IMAGEN_HUB:latest
-        TARGET_IMAGE="$IMAGEN_HUB:latest"
-        ;;
-    *)
-        echo "--- MODO DESARROLLO: Compilando localmente ($NOMBRE_APP) ---"
-        ./mvnw clean package -DskipTests
-        docker build -t $NOMBRE_APP:local .
-        TARGET_IMAGE="$NOMBRE_APP:local"
-        ;;
-esac
-
-echo "--- Limpiando contenedor anterior ---"
-docker stop ${NOMBRE_APP}-container 2>/dev/null
-docker rm ${NOMBRE_APP}-container 2>/dev/null
-
-echo "--- Iniciando contenedor en puerto $PUERTO ---"
-docker run \
-           --restart always \
-           -d -p ${PUERTO}:${PUERTO} \
-           --env-file docker.env \
-           --network laflorida \
-           --add-host=host.docker.internal:host-gateway \
-           --name ${NOMBRE_APP}-container \
-           $TARGET_IMAGE
-
+echo "--- Creando imagen docker ($NOMBRE_APP) ---"
+./mvnw clean package -DskipTests
+docker build -t $NOMBRE_APP:local .
+TARGET_IMAGE="$NOMBRE_APP:local"
+        
 # Limpia imágenes antiguas para no llenar el disco del PC de la oficina
 docker image prune -f
 echo "--- Proceso Terminado ($OPCION) ---"
