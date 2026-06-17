@@ -1,5 +1,7 @@
 package com.smcapis.smcapis.dto;
 
+import java.time.LocalDate;
+
 public class FuncionarioDto {
 
     private Integer rut;
@@ -15,6 +17,11 @@ public class FuncionarioDto {
     private String tipoContrato;
     private String escalafon;
     private int grado;
+    private LocalDate fechafin;
+    private boolean vigente;
+    private LocalDate fechaNacimiento;
+
+    
 
     public String getEscalafon() {
         return escalafon;
@@ -118,6 +125,30 @@ public class FuncionarioDto {
 
     public void setIdent(Integer ident) {
         this.ident = ident;
+    }
+
+    public LocalDate getFechafin() {
+        return fechafin;
+    }
+
+    public void setFechafin(LocalDate fechafin) {
+        this.fechafin = fechafin;
+    }
+
+    public boolean isVigente() {
+        return vigente;
+    }
+
+    public void setVigente(boolean vigente) {
+        this.vigente = vigente;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
 }
