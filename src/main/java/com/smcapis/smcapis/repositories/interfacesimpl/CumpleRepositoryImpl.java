@@ -76,6 +76,7 @@ public class CumpleRepositoryImpl implements CumpleRepository {
                 .tipoContrato(rs.getString("tipocontrato"))
                 .escalafon(rs.getString("nombreescalafon"))
                 .grado(rs.getInt("grado"))
+                .vigente(rs.getBoolean("vigente"))
                 .build();
 
     }
