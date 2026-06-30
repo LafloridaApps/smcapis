@@ -5,59 +5,62 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.smcapis.smcapis.dto.FuncionarioDto;
 import com.smcapis.smcapis.expections.FileException;
-import com.smcapis.smcapis.repositories.interfaces.FuncionarioRespository;
+import com.smcapis.smcapis.repositories.interfaces.CumpleRepository;
 import com.smcapis.smcapis.utiles.FotoUtils;
 
+import org.springframework.core.io.Resource;
+
 @Repository
-public class FuncionarioRepositoryImpl implements FuncionarioRespository {
+public class CumpleRepositoryImpl implements CumpleRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
     private final String sql;
 
-    public FuncionarioRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+    public CumpleRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
             ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
-            Resource resource = resourceLoader.getResource("classpath:funcionario.sql");
-            this.sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+            Resource resourceRes = resourceLoader.getResource("classpath:cumple.sql");
+            this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
         }
     }
 
     @Override
-    public FuncionarioDto getFuncionario(Integer rut) {
+    public List<FuncionarioDto> obtenerCumpleMes() {
 
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("rut", rut);
+        List<FuncionarioDto> funcionarios = namedParameterJdbcTemplate.query(sql,
 
-        try {
-            return namedParameterJdbcTemplate.queryForObject(sql,
-                    params,
-                    this::mapToFuncionarioDto);
-        } catch (EmptyResultDataAccessException e) {
+                this::mapToFuncionarioDto);
 
-            throw new EmptyResultDataAccessException("No se encontró funcionario con rut: " + rut, 1);
+        if (funcionarios.isEmpty()) {
+            throw new EmptyResultDataAccessException("No se encontró funcionario con rut: ", 1);
         }
+
+        return funcionarios;
 
     }
 
     private FuncionarioDto mapToFuncionarioDto(ResultSet rs, int row) throws SQLException {
 
         byte[] imageBytes = rs.getBytes("foto");
-        LocalDate fechaNacimiento = rs.getDate("fecha_nacimiento") != null ? rs.getDate("fecha_nacimiento").toLocalDate() : null;
+
+        Optional<LocalDate> fechaNacimiento = Optional.ofNullable(rs.getDate("fecha_nacimiento"))
+                .map(java.sql.Date::toLocalDate);
 
         return FuncionarioDto.builder()
                 .rut(rs.getInt("rut"))
@@ -69,11 +72,10 @@ public class FuncionarioRepositoryImpl implements FuncionarioRespository {
                 .nombres(rs.getString("nombres"))
                 .departamento(rs.getString("departamento"))
                 .ident(rs.getInt("ident"))
-                .fechaNacimiento(fechaNacimiento)
+                .fechaNacimiento(fechaNacimiento.orElse(null))
                 .tipoContrato(rs.getString("tipocontrato"))
                 .escalafon(rs.getString("nombreescalafon"))
                 .grado(rs.getInt("grado"))
-                .codDeptoExt(rs.getString("coddepto"))
                 .build();
 
     }

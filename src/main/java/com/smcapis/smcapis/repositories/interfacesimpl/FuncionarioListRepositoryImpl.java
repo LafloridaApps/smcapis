@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.smcapis.smcapis.dto.FuncionarioDto;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.repositories.interfaces.FuncionarioListRepository;
+import com.smcapis.smcapis.utiles.FechaUtils;
 import com.smcapis.smcapis.utiles.FotoUtils;
 
 import org.springframework.core.io.ResourceLoader;
@@ -58,32 +59,37 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
     }
 
     private FuncionarioDto mapToFuncionarioDto(ResultSet rs, int row) throws SQLException {
-        FuncionarioDto funcionarioDto = new FuncionarioDto();
-        funcionarioDto.setRut(rs.getInt("rut"));
-        funcionarioDto.setVrut(rs.getString("vrut"));
-        funcionarioDto.setEmail(rs.getString("email"));
-        funcionarioDto.setPaterno(rs.getString("apellidopaterno"));
-        funcionarioDto.setMaterno(rs.getString("apellidomaterno"));
-        funcionarioDto.setNombres(rs.getString("nombres"));
-
-        funcionarioDto.setCodDeptoExt(rs.getString("coddepto"));
-        funcionarioDto.setIdent(rs.getInt("ident"));
-        funcionarioDto.setTipoContrato(rs.getString("tipocontrato"));
-        funcionarioDto.setEscalafon(rs.getString("nombreescalafon"));
-        funcionarioDto.setGrado(rs.getInt("grado"));
-        funcionarioDto.setFechafin(rs.getDate("fechafin").toLocalDate());
-        funcionarioDto.setVigente(estadoContrato(rs.getDate("fechafin").toLocalDate()));
-        funcionarioDto.setFechaNacimiento(rs.getDate("fecha_nacimiento").toLocalDate());
-
 
         byte[] imageBytes = rs.getBytes("foto");
-        funcionarioDto.setFoto(imageBytes != null ? FotoUtils.fotoConverter(imageBytes) : " ");
-        funcionarioDto.setDepartamento(rs.getString("departamento"));
-        return funcionarioDto;
+        LocalDate fechaNacimiento = rs.getDate("fecha_nacimiento") != null ? rs.getDate("fecha_nacimiento").toLocalDate() : null;
+        LocalDate fechaFin = rs.getDate("fechafin") != null ? rs.getDate("fechafin").toLocalDate() : null;
+
+
+        return FuncionarioDto.builder()
+        .rut(rs.getInt("rut"))
+        .vrut(rs.getString("vrut"))
+        .email(rs.getString("email"))
+        .paterno(rs.getString("apellidopaterno"))
+        .materno(rs.getString("apellidomaterno"))
+        .nombres(rs.getString("nombres"))
+        .codDeptoExt(rs.getString("coddepto"))
+        .foto(imageBytes != null ? FotoUtils.fotoConverter(imageBytes) : " ")
+        .departamento(rs.getString("departamento"))
+        .ident(rs.getInt("ident"))
+        .tipoContrato(rs.getString("tipocontrato"))
+        .escalafon(rs.getString("nombreescalafon"))
+        .grado(rs.getInt("grado"))
+        .fechafin(fechaFin)
+        .vigente(estadoContrato(fechaFin))
+        .fechaNacimiento(fechaNacimiento)
+
+        .build();
+
+
     }
 
     private boolean estadoContrato(LocalDate fechaContrato) {
-        return fechaContrato == null || fechaContrato.isAfter(LocalDate.now());
+        return fechaContrato == null || fechaContrato.isAfter(FechaUtils.fechaActual());
     }
 
 }

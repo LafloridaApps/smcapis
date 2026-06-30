@@ -1,50 +1,13 @@
-SELECT
-    personas.rut,
-    personas.NOMBRES,
-    PERSONAS.APELLIDOPATERNO,
-    personas.APELLIDOMATERNO,
-    (
-        select
-            vrut
-        from
-            CONTRIBUYENTES c
-        where
-            c.RUT = PERSONAS.rut
-    ) as vrut,
-    (
-        select
-            email
-        from
-            CONTRIBUYENTES
-        where
-            CONTRIBUYENTES.rut = personas.rut
-    ) as email,
-    FOTO,
-    contratomes.DEPTO as coddepto,
-    (
-        select
-            nombre_departamento
-        from
-            DEPARTAMENTOS d
-        where
-            d.depto = contratomes.DEPTO
-    ) as departamento,
-    contratomes.ident,
-    (
-        select
-            nombretipocontrato
-        from
-            RETIPOSCONTRATO tipos
-        where
-            tipos.IDENT = contratomes.IDENT
-            and tipos.CODTIPOCONTRATO = contratomes.CODTIPOCONTRATO
-    ) as tipocontrato,
-    case
-        when escala.grado is null then 0
-        else grado
-    end grado,
-    nombreescalafon,
-    personas.fecha_nacimiento
+SELECT personas.rut, personas.NOMBRES,PERSONAS.APELLIDOPATERNO, personas.APELLIDOMATERNO,
+(select vrut from CONTRIBUYENTES c where c.RUT = PERSONAS.rut ) as vrut,
+(select email from CONTRIBUYENTES where CONTRIBUYENTES.rut = personas.rut) as email,
+FOTO,contratomes.DEPTO as coddepto,
+(select nombre_departamento from DEPARTAMENTOS d where d.depto = contratomes.DEPTO ) as departamento,
+contratomes.ident,
+(select nombretipocontrato from RETIPOSCONTRATO tipos  where tipos.IDENT = contratomes.IDENT and tipos.CODTIPOCONTRATO = contratomes.CODTIPOCONTRATO) as tipocontrato,
+case when escala.grado is null then 0 else grado  end grado,
+  nombreescalafon,
+  personas.FECHA_NACIMIENTO 
 FROM
     RECONTRATOS AS contratos
     INNER JOIN RECONTRATOMES contratomes ON contratos.IDENT = contratomes.IDENT
@@ -59,8 +22,7 @@ FROM
     left join reescalafones on contratomes.codescalafon = reescalafones.codescalafon
     and contratomes.ident = reescalafones.ident
     left join PEFOTOGRAFIA on contratos.rut = PEFOTOGRAFIA.rut
-WHERE
-    contratomes.ANOREMUN = YEAR(GETDATE())
+WHERE  contratomes.ANOREMUN = YEAR(GETDATE())
     AND contratomes.MESREMUN = (
         select
             max(r.MESREMUN)
@@ -76,4 +38,3 @@ WHERE
         contratos.fechafin IS NULL
         OR contratos.fechafin >= CONVERT(date, GETDATE(), 104)
     )
-    AND contratos.RUT = :rut
