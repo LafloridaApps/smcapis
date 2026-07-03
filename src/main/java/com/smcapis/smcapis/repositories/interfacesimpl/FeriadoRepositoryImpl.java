@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import com.smcapis.smcapis.dto.DetalleFeriadoLegal;
 import com.smcapis.smcapis.dto.ResumenFeriadoLegal;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.repositories.interfaces.FeriadoRepository;
+import com.smcapis.smcapis.utiles.FechaUtils;
 
 @Repository
 public class FeriadoRepositoryImpl implements FeriadoRepository {
@@ -33,8 +33,8 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
     public FeriadoRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate, ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         try {
-            Resource resourceRes = resourceLoader.getResource("classpath:resumenferiados.sql");
-            Resource resourceDetalle = resourceLoader.getResource("classpath:detalleferiado.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/resumenferiados.sql");
+            Resource resourceDetalle = resourceLoader.getResource("classpath:sql/detalleferiado.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             this.sqlDetalle = new String(resourceDetalle.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -47,7 +47,7 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
         params.addValue("ident", ident);
-        params.addValue("anio", Year.now().getValue());
+        params.addValue("anio", FechaUtils.fechaActual().getYear());
         params.addValue("fecha", formatearFecha());
 
         try {
@@ -123,7 +123,7 @@ public class FeriadoRepositoryImpl implements FeriadoRepository {
 
     private LocalDate ulitmoDiaMesActual() {
 
-        LocalDate hoy = LocalDate.now();
+        LocalDate hoy = FechaUtils.fechaActual();
 
         return hoy.with(TemporalAdjusters.lastDayOfMonth());
 

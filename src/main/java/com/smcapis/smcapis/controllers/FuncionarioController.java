@@ -5,28 +5,33 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smcapis.smcapis.services.CumpleService;
 import com.smcapis.smcapis.services.FuncionarioServiceImpl;
+import com.smcapis.smcapis.services.interfaces.CumpleService;
+import com.smcapis.smcapis.services.interfaces.FichaFuncionarioService;
 import com.smcapis.smcapis.services.interfaces.FuncionarioListService;
 import com.smcapis.smcapis.services.interfaces.FuncionarioService;
 
 @RestController
 @RequestMapping("/api/funcionario")
-@CrossOrigin(origins = {"https://intranet.laflorida.cl"})
+@CrossOrigin(origins = { "https://intranet.laflorida.cl" })
 public class FuncionarioController {
 
     private final FuncionarioService funcionarioService;
     private final FuncionarioListService funcionarioListService;
     private final CumpleService cumpleService;
+    private final FichaFuncionarioService fichaFuncionarioService;
 
-
-
-    public FuncionarioController(FuncionarioServiceImpl funcionarioService, FuncionarioListService funcionarioListService, CumpleService cumpleService) {
+    public FuncionarioController(FuncionarioServiceImpl funcionarioService,
+            FuncionarioListService funcionarioListService,
+            CumpleService cumpleService,
+            FichaFuncionarioService fichaFuncionarioService) {
         this.funcionarioService = funcionarioService;
         this.funcionarioListService = funcionarioListService;
         this.cumpleService = cumpleService;
+        this.fichaFuncionarioService = fichaFuncionarioService;
     }
 
     @GetMapping("/{rut}")
@@ -36,7 +41,7 @@ public class FuncionarioController {
 
     }
 
-     @GetMapping("/{rut}/list")
+    @GetMapping("/{rut}/list")
     public ResponseEntity<Object> getFuncionarioListByRut(@PathVariable Integer rut) {
 
         return ResponseEntity.ok(funcionarioListService.getFuncionario(rut));
@@ -44,8 +49,15 @@ public class FuncionarioController {
     }
 
     @GetMapping("/cumple-list")
-    public ResponseEntity<Object> getCumpleMensuales(){
+    public ResponseEntity<Object> getCumpleMensuales() {
         return ResponseEntity.ok(cumpleService.obtenerCumpleMes());
+    }
+
+    @GetMapping("/ficha")
+    public ResponseEntity<Object> getFichaByRut(@RequestParam Integer rut, @RequestParam Integer ident) {
+
+        return ResponseEntity.ok(fichaFuncionarioService.getFichaByRut(rut, ident));
+
     }
 
 }

@@ -35,8 +35,8 @@ public class MaeInvRepositoryImpl implements MaeInvRepository {
 
         try {
 
-            Resource resourceRes = resourceLoader.getResource("classpath:maeinv.sql");
-            Resource resourceDepto = resourceLoader.getResource("classpath:maestroinvdepto.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/maeinv.sql");
+            Resource resourceDepto = resourceLoader.getResource("classpath:sql/maestroinvdepto.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             this.sqlDepto = new String(resourceDepto.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 

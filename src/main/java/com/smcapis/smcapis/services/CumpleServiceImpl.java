@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.smcapis.smcapis.dto.FuncionarioDto;
 
 import com.smcapis.smcapis.repositories.interfaces.CumpleRepository;
+import com.smcapis.smcapis.services.interfaces.CumpleService;
 import com.smcapis.smcapis.utiles.FechaUtils;
 
 @Service

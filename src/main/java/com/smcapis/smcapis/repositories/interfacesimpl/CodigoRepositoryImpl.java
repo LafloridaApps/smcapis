@@ -16,7 +16,8 @@ import com.smcapis.smcapis.dto.CodigoResponse;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.repositories.interfaces.CodigoRepository;
 import com.smcapis.smcapis.utiles.UtilsHelper;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 @Repository
@@ -24,13 +25,14 @@ public class CodigoRepositoryImpl implements CodigoRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private String sql;
+    private static final Logger logger = LoggerFactory.getLogger(CodigoRepositoryImpl.class);
 
     public CodigoRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
             ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
-            Resource resource = resourceLoader.getResource("classpath:codigoart.sql");
+            Resource resource = resourceLoader.getResource("classpath:sql/codigoart.sql");
             this.sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
@@ -55,8 +57,7 @@ public class CodigoRepositoryImpl implements CodigoRepository {
         } catch (EmptyResultDataAccessException e) {
             return null; // Es el comportamiento esperado si no se encuentran registros
         } catch (Exception e) {
-            // Imprime el verdadero motivo del error para que puedas arreglarlo
-            e.printStackTrace(); 
+            logger.error("Error al buscar código {}", codigo, e);
             return null;
         }
     }

@@ -28,7 +28,7 @@ public class DepartamentoRepositoryImpl  implements DepartamentosRepository {
         this.jdbcTemplate = jdbcTemplate;
 
         try {
-            Resource resource = resourceLoader.getResource("classpath:departamentos.sql");
+            Resource resource = resourceLoader.getResource("classpath:sql/departamentos.sql");
             this.sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");

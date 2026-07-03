@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Year;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
@@ -20,6 +19,7 @@ import com.smcapis.smcapis.dto.ResumenAdm;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.expections.RecursoNoEncontradoException;
 import com.smcapis.smcapis.repositories.interfaces.AdministrativoRepository;
+import com.smcapis.smcapis.utiles.FechaUtils;
 
 @Repository
 public class AdministrativoRepositoryImpl implements AdministrativoRepository {
@@ -36,11 +36,11 @@ public class AdministrativoRepositoryImpl implements AdministrativoRepository {
 
         try {
 
-            Resource resourceRes = resourceLoader.getResource("classpath:resumenadm.sql");
-            Resource resourceDetalle = resourceLoader.getResource("classpath:detalleadm.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/resumenadm.sql");
+            Resource resourceDetalle = resourceLoader.getResource("classpath:sql/detalleadm.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             this.sqlDetalle = new String(resourceDetalle.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            this.anio = Year.now().getValue();
+            this.anio = FechaUtils.fechaActual().getYear();
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
         }

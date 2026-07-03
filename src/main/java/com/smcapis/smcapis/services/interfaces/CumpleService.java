@@ -1,4 +1,4 @@
-package com.smcapis.smcapis.services;
+package com.smcapis.smcapis.services.interfaces;
 
 import java.util.List;
 

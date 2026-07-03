@@ -11,27 +11,27 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
-import com.smcapis.smcapis.dto.OficinaInvResponse;
+import com.smcapis.smcapis.dto.ProfesionDto;
 import com.smcapis.smcapis.expections.FileException;
-import com.smcapis.smcapis.repositories.interfaces.OficinaInventarioRepository;
+import com.smcapis.smcapis.repositories.interfaces.ProfesionesRepository;
 import org.springframework.core.io.Resource;
 
-@Service
-public class OficinaInventarioRepositoryImpl implements OficinaInventarioRepository {
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+@Repository
+public class ProfesionesRepositoryImpl implements ProfesionesRepository{
 
+       private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final String sql;
 
-    public OficinaInventarioRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+    public ProfesionesRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
             ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
 
-            Resource resourceRes = resourceLoader.getResource("classpath:sql/oficinasinv.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/profesiones.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         } catch (IOException e) {
@@ -40,30 +40,26 @@ public class OficinaInventarioRepositoryImpl implements OficinaInventarioReposit
     }
 
     @Override
-    public List<OficinaInvResponse> getOficinasByDepto(String depto) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("depto", depto);
+    public List<ProfesionDto> getProfesionFuncionario(Integer rut) {
+         MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("rut", rut);
 
         try {
-
             return namedParameterJdbcTemplate.query(sql,
                     params,
-                    this::mapToDto);
-
+                    this::mapDto);
         } catch (EmptyResultDataAccessException e) {
+
             return new ArrayList<>();
         }
     }
 
-    private OficinaInvResponse mapToDto(ResultSet rs, int row) throws SQLException {
-        return new OficinaInvResponse(
-                rs.getString("depto"),
-                rs.getInt("linoficina"),
-                rs.getString("nombreoficina"),
-                rs.getString("responsableoficina"),
-                rs.getString("cargooficina")
+    private ProfesionDto mapDto(ResultSet rs, int rowNum) throws SQLException {
 
-        );
+        return new ProfesionDto.Builder()
+                .profesion(rs.getString("profesion"))
+                .build();
+
     }
 
 }

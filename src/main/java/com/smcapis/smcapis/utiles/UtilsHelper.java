@@ -30,7 +30,7 @@ public class UtilsHelper {
 
     public static LocalDate formatFecha(String fecha) {
 
-        if(fecha == null){
+        if (fecha == null) {
             return null;
         }
 

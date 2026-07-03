@@ -11,27 +11,26 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
-import com.smcapis.smcapis.dto.OficinaInvResponse;
+import com.smcapis.smcapis.dto.LicenciasMedicasFuncionarioDto;
 import com.smcapis.smcapis.expections.FileException;
-import com.smcapis.smcapis.repositories.interfaces.OficinaInventarioRepository;
+import com.smcapis.smcapis.repositories.interfaces.LicenciasMedicasRepository;
 import org.springframework.core.io.Resource;
 
-@Service
-public class OficinaInventarioRepositoryImpl implements OficinaInventarioRepository {
+@Repository
+public class LicenciasMedicasRepositoryImpl implements LicenciasMedicasRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
     private final String sql;
 
-    public OficinaInventarioRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+    public LicenciasMedicasRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
             ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
 
-            Resource resourceRes = resourceLoader.getResource("classpath:sql/oficinasinv.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/licenciasmedicas.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         } catch (IOException e) {
@@ -40,30 +39,31 @@ public class OficinaInventarioRepositoryImpl implements OficinaInventarioReposit
     }
 
     @Override
-    public List<OficinaInvResponse> getOficinasByDepto(String depto) {
+    public List<LicenciasMedicasFuncionarioDto> getLicenciasMedicasByRut(Integer rut, Integer ident) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("depto", depto);
+        params.addValue("rut", rut);
+        params.addValue("ident", ident);
 
         try {
-
             return namedParameterJdbcTemplate.query(sql,
                     params,
-                    this::mapToDto);
-
+                    this::mapDto);
         } catch (EmptyResultDataAccessException e) {
+
             return new ArrayList<>();
         }
     }
 
-    private OficinaInvResponse mapToDto(ResultSet rs, int row) throws SQLException {
-        return new OficinaInvResponse(
-                rs.getString("depto"),
-                rs.getInt("linoficina"),
-                rs.getString("nombreoficina"),
-                rs.getString("responsableoficina"),
-                rs.getString("cargooficina")
+    private LicenciasMedicasFuncionarioDto mapDto(ResultSet rs, int rowNum) throws SQLException {
 
-        );
+        return new LicenciasMedicasFuncionarioDto.Builder()
+                .fechaInicio(rs.getDate("fechaini").toLocalDate())
+                .fechaRecepcion(rs.getDate("fecharecepcion").toLocalDate())
+                .numlic(rs.getLong("numlic"))
+                .diaslic(rs.getInt("diaslic"))
+                .tipoLicencia(rs.getString("desctipolic"))
+                .build();
+
     }
 
 }

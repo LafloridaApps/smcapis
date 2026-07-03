@@ -1,76 +1,69 @@
 package com.smcapis.smcapis.repositories.interfacesimpl;
 
+import com.smcapis.smcapis.dto.AnotacionesFuncionarioDto;
+import com.smcapis.smcapis.expections.FileException;
+import com.smcapis.smcapis.repositories.interfaces.AnotacionesRepository;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.core.io.Resource;
+
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.smcapis.smcapis.dto.AusenciasResponse;
-import com.smcapis.smcapis.expections.FileException;
-import com.smcapis.smcapis.repositories.interfaces.AusenciaRespository;
-
 @Repository
-public class AusenciasRepositoryImpl implements AusenciaRespository {
+public class AnotacionesRepositoryImpl implements AnotacionesRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
     private final String sql;
 
-    public AusenciasRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+    public AnotacionesRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
             ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
 
-            Resource resourceRes = resourceLoader.getResource("classpath:sql/buscaausencias.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/anotaciones.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
         }
     }
 
     @Override
-    public List<AusenciasResponse> getAusenciasByRutAndIdent(Integer rut, Integer ident, LocalDate fechaInicio,
-            LocalDate fechaFin) {
+    public List<AnotacionesFuncionarioDto> getAnotacionesByRutAndIdent(Integer rut, Integer ident) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
         params.addValue("ident", ident);
-        params.addValue("fechaInicio", fechaInicio);
-        params.addValue("fechaFin", fechaFin);
 
         try {
             return namedParameterJdbcTemplate.query(sql,
                     params,
-                    this::mapToAusencia);
+                    this::mapDto);
         } catch (EmptyResultDataAccessException e) {
 
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
     }
 
-    private AusenciasResponse mapToAusencia(ResultSet rs, int rowNum) throws SQLException {
+    private AnotacionesFuncionarioDto mapDto(ResultSet rs, int rowNum) throws SQLException {
 
-        AusenciasResponse ausencia = new AusenciasResponse();
-        ausencia.setRut(rs.getInt("rut"));
-        ausencia.setIdent(rs.getInt("ident"));
-        ausencia.setTipoAusencia(rs.getString("desctipoausencia"));
-        ausencia.setFechaInicio(rs.getString("fechainicio"));
-        ausencia.setFechaTermino(rs.getString("fechatermino"));
-
-        return ausencia;
+        return new AnotacionesFuncionarioDto.Builder()
+                .fechaAnotacion(rs.getDate("fechaanotacion").toLocalDate())
+                .glosaAnotacion(rs.getString("glosaanotacion"))
+                .anoCalif(rs.getInt("anocalif"))
+                .descripsubgrupocalif(rs.getString("descripsubgrupocalif"))
+                .desctipoanotacion(rs.getString("desctipoanotacion"))
+                .build();
 
     }
-
-    
 
 }

@@ -29,7 +29,7 @@ public class PatenteAlcoholRepositoryImpl implements PatenteAlcoholRepository {
         this.jdbcTemplate = jdbcTemplate;
 
         try {
-            Resource resource = resourceLoader.getResource("classpath:patcomalchol.sql");
+            Resource resource = resourceLoader.getResource("classpath:sql/patcomalchol.sql");
             this.sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");

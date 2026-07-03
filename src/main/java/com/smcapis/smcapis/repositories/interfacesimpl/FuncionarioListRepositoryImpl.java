@@ -33,7 +33,7 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
-            Resource resource = resourceLoader.getResource("classpath:funcionarioList.sql");
+            Resource resource = resourceLoader.getResource("classpath:sql/funcionarioList.sql");
             this.sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");

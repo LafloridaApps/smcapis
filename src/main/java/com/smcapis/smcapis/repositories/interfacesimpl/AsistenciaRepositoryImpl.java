@@ -31,7 +31,7 @@ public class AsistenciaRepositoryImpl implements AsistenciaRepository {
 
         try {
 
-            Resource resourceRes = resourceLoader.getResource("classpath:asistencia.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/asistencia.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         } catch (IOException e) {

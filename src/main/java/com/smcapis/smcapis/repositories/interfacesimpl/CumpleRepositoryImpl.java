@@ -32,7 +32,7 @@ public class CumpleRepositoryImpl implements CumpleRepository {
 
         try {
 
-            Resource resourceRes = resourceLoader.getResource("classpath:cumple.sql");
+            Resource resourceRes = resourceLoader.getResource("classpath:sql/cumple.sql");
             this.sql = new String(resourceRes.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         } catch (IOException e) {
