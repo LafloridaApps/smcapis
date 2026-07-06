@@ -77,6 +77,8 @@ public record RespuestaLiquidacionDetalle(
     @JsonProperty("apvAFPCapital") String apvAFPCapital,
     @JsonProperty("achs") String achs,
     @JsonProperty("atrasos") String atrasos,
-    @JsonProperty("ret3porcPrestamoSoli") String retencion3PorcientoPrestamoSolidario
+    @JsonProperty("ret3porcPrestamoSoli") String retencion3PorcientoPrestamoSolidario,
+    @JsonProperty("texto_horas_extras") String textoHorasExtras,
+    @JsonProperty("sueldo_liquido_palabras") String sueldoLiquidoPalabras
 ) {
 }

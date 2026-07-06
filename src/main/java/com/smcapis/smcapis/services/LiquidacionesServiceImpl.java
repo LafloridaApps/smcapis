@@ -4,6 +4,7 @@ import com.smcapis.smcapis.config.ConfiguracionLiquidaciones;
 import com.smcapis.smcapis.dto.ItemLiquidacion;
 import com.smcapis.smcapis.dto.RespuestaLiquidacionDetalle;
 import com.smcapis.smcapis.services.interfaces.LiquidacionesService;
+import com.smcapis.smcapis.utiles.NumeroUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class LiquidacionesServiceImpl implements LiquidacionesService {
@@ -27,7 +29,8 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
 
     @Override
     public RespuestaLiquidacionDetalle obtenerDetalle(Integer rut, Integer dominioId, Integer anio, Integer mes, Integer procesoId, String comuna) {
-        return llamarApi(rut, dominioId, anio, mes, procesoId, comuna);
+        RespuestaLiquidacionDetalle respuesta = llamarApi(rut, dominioId, anio, mes, procesoId, comuna);
+        return enriquecer(respuesta);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
             return null;
         }
 
-        return consolidar(respuestas);
+        return enriquecer(consolidar(respuestas));
     }
 
     private RespuestaLiquidacionDetalle llamarApi(Integer rut, Integer dominioId, Integer anio, Integer mes, Integer procesoId, String comuna) {
@@ -179,8 +182,104 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
                 primera.apvAFPCapital(),
                 primera.achs(),
                 primera.atrasos(),
-                primera.retencion3PorcientoPrestamoSolidario()
+                primera.retencion3PorcientoPrestamoSolidario(),
+                null,
+                null
         );
+    }
+
+    private RespuestaLiquidacionDetalle enriquecer(RespuestaLiquidacionDetalle original) {
+        if (original == null) return null;
+        String textoHE = generarTextoHorasExtras(original.detalle(), original.reparticion());
+        String sueldoPalabras = NumeroUtils.numeroAPalabras(original.sueldoLiquido());
+        return new RespuestaLiquidacionDetalle(
+                original.liquidacionId(),
+                original.anio(),
+                original.mes(),
+                original.nombreCompleto(),
+                original.rut(),
+                original.codigo(),
+                original.grado(),
+                original.nivel(),
+                original.titulo(),
+                original.jornada(),
+                original.proceso(),
+                original.reparticion(),
+                original.cheque(),
+                original.cajaPrevisional(),
+                original.institucionSalud(),
+                original.bienios(),
+                original.cargaFamiliar(),
+                original.detalle(),
+                original.totalHaberes(),
+                original.totalDescuentos(),
+                original.totalTributable(),
+                original.totalImpPrevisional(),
+                original.totalImpSalud(),
+                original.sueldoLiquido(),
+                original.diasTrabajados(),
+                original.cotizPactadaIsapre(),
+                original.porcentajeImp(),
+                original.fechaAntiguedad(),
+                original.horasExtras(),
+                original.incDL3551(),
+                original.asigResponsab(),
+                original.asigFamiliar(),
+                original.planSuplem(),
+                original.aporteSegInvSob(),
+                original.segCesantiaEmp(),
+                original.asigCritica(),
+                original.asigLey18717(),
+                original.asigDireccionSuper(),
+                original.horasExtras50porc(),
+                original.gastosRepresenta(),
+                original.mutual(),
+                original.fondoBonoLaboral(),
+                original.difHabRetroactivos(),
+                original.montoImponible(),
+                original.montoImpDeshaucio(),
+                original.ahVoluntario(),
+                original.retJudicial(),
+                original.ahorPrevVol(),
+                original.segCesantia(),
+                original.hdiFidelidad(),
+                original.hdiConductores(),
+                original.anticipoArriendoCasaFiscal(),
+                original.casasCorfo(),
+                original.bienestarMOP(),
+                original.mutualSeguros(),
+                original.aporteBienestarMunicipal(),
+                original.prestamoBienestarMunicipal(),
+                original.coopeuch(),
+                original.prestamosCoopeuch(),
+                original.asocProfesionalesGobiernoRegional(),
+                original.prestamoAraucana(),
+                original.hogarDeCristo(),
+                original.seguroInvalidezSobrevivenciaEmpresa(),
+                original.ciaSeguroConfuturo(),
+                original.flgSportlife(),
+                original.seguroHogarAraucana(),
+                original.seguroVidaAraucana(),
+                original.apvAFPCapital(),
+                original.achs(),
+                original.atrasos(),
+                original.retencion3PorcientoPrestamoSolidario(),
+                textoHE,
+                sueldoPalabras
+        );
+    }
+
+    private String generarTextoHorasExtras(List<ItemLiquidacion> detalle, String reparticion) {
+        if (detalle == null || detalle.isEmpty()) return "";
+        Map<String, String> etiquetas = Map.of("026", "HOR_EXTR(25%)", "029", "HOR_EXTR(50%)");
+        String texto = detalle.stream()
+                .filter(i -> "026".equals(i.codigo()) || "029".equals(i.codigo()))
+                .sorted((a, b) -> a.codigo().compareTo(b.codigo()))
+                .map(i -> etiquetas.get(i.codigo()) + " $" + i.valor())
+                .collect(Collectors.joining(", "));
+        if (texto.isEmpty()) return "";
+        if (reparticion != null && !reparticion.isBlank()) texto += " (" + reparticion + ")";
+        return texto;
     }
 
 }
