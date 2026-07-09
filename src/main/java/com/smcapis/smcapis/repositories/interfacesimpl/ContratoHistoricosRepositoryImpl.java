@@ -57,15 +57,19 @@ public class ContratoHistoricosRepositoryImpl implements ContratosHistoricosRepo
 
     private ContratoDto mapToFuncionarioDto(ResultSet rs, int row) throws SQLException {
 
+        java.sql.Date fechaIni = rs.getDate("fechaini");
+        java.sql.Date fechaFi = rs.getDate("fechafin");
+        java.sql.Date fechaResol = rs.getDate("fecharesolcontr");
+
         return ContratoDto.builder()
                 .departamento(rs.getString("departamento"))
                 .ident(rs.getInt("ident"))
                 .tipoContrato(rs.getString("tipocontrato"))
                 .grado(rs.getInt("grado"))
                 .nombreescalafon(rs.getString("nombreescalafon"))
-                .fechaInicio(rs.getDate("fechaini").toLocalDate())
-                .fechaFin(rs.getDate("fechafin").toLocalDate())
-                .fechaResolContr(rs.getDate("fecharesolcontr").toLocalDate())
+                .fechaInicio(fechaIni != null ? fechaIni.toLocalDate() : null)
+                .fechaFin(fechaFi != null ? fechaFi.toLocalDate() : null)
+                .fechaResolContr(fechaResol != null ? fechaResol.toLocalDate() : null)
                 .numeroSolContr(rs.getString("numresolcontr"))
                 .obscontre(rs.getString("obscontre"))
 
