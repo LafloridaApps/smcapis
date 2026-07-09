@@ -12,6 +12,7 @@ public class FichaFuncionarioDto {
     private List<CargasFamiliaresDto> cargasFamiliares;
     private List<ProfesionDto> profesiones;
     private List<CursoFuncionarioDto> cursos;
+    private List<ContratoDto> contratos;
 
     private FichaFuncionarioDto(Builder builder) {
         this.rut = builder.rut;
@@ -21,66 +22,43 @@ public class FichaFuncionarioDto {
         this.cargasFamiliares = builder.cargasFamiliares;
         this.profesiones = builder.profesiones;
         this.cursos = builder.cursos;
+        this.contratos = builder.contratos;
     }
 
     public FichaFuncionarioDto.Builder builder() {
         return new FichaFuncionarioDto.Builder();
     }
 
-    public List<CargasFamiliaresDto> getCargasFamiliares() {
-        return cargasFamiliares;
-    }
-
-    public void setCargasFamiliares(List<CargasFamiliaresDto> cargasFamiliares) {
-        this.cargasFamiliares = cargasFamiliares;
-    }
-
-    public List<ProfesionDto> getProfesiones() {
-        return profesiones;
-    }
-
-    public void setProfesiones(List<ProfesionDto> profesiones) {
-        this.profesiones = profesiones;
-    }
-
     public int getRut() {
         return rut;
-    }
-
-    public void setRut(int rut) {
-        this.rut = rut;
     }
 
     public int getIdent() {
         return ident;
     }
 
-    public void setIdent(int ident) {
-        this.ident = ident;
-    }
-
     public List<AnotacionesFuncionarioDto> getAnotaciones() {
         return anotaciones;
-    }
-
-    public void setAnotaciones(List<AnotacionesFuncionarioDto> anotaciones) {
-        this.anotaciones = anotaciones;
     }
 
     public List<LicenciasMedicasFuncionarioDto> getLicenciasMedicas() {
         return licenciasMedicas;
     }
 
-    public void setLicenciasMedicas(List<LicenciasMedicasFuncionarioDto> licenciasMedicas) {
-        this.licenciasMedicas = licenciasMedicas;
+    public List<CargasFamiliaresDto> getCargasFamiliares() {
+        return cargasFamiliares;
+    }
+
+    public List<ProfesionDto> getProfesiones() {
+        return profesiones;
     }
 
     public List<CursoFuncionarioDto> getCursos() {
         return cursos;
     }
 
-    public void setCursos(List<CursoFuncionarioDto> cursos) {
-        this.cursos = cursos;
+    public List<ContratoDto> getContratos() {
+        return contratos;
     }
 
     public static class Builder {
@@ -91,6 +69,7 @@ public class FichaFuncionarioDto {
         private List<CargasFamiliaresDto> cargasFamiliares;
         private List<ProfesionDto> profesiones;
         private List<CursoFuncionarioDto> cursos;
+        private List<ContratoDto> contratos;
 
         public Builder rut(int rut) {
             this.rut = rut;
@@ -124,6 +103,11 @@ public class FichaFuncionarioDto {
 
         public Builder cursos(List<CursoFuncionarioDto> cursos) {
             this.cursos = cursos;
+            return this;
+        }
+
+        public Builder contratos(List<ContratoDto> contratos) {
+            this.contratos = contratos;
             return this;
         }
 

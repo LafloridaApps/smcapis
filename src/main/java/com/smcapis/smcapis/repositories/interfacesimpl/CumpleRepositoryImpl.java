@@ -5,11 +5,11 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -48,7 +48,7 @@ public class CumpleRepositoryImpl implements CumpleRepository {
                 this::mapToFuncionarioDto);
 
         if (funcionarios.isEmpty()) {
-            throw new EmptyResultDataAccessException("No se encontró funcionario con rut: ", 1);
+           return new ArrayList<>();
         }
 
         return funcionarios;
