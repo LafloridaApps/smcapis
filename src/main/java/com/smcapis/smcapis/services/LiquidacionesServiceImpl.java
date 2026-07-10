@@ -3,6 +3,7 @@ package com.smcapis.smcapis.services;
 import com.smcapis.smcapis.config.ConfiguracionLiquidaciones;
 import com.smcapis.smcapis.dto.ItemLiquidacion;
 import com.smcapis.smcapis.dto.RespuestaLiquidacionDetalle;
+import com.smcapis.smcapis.expections.RecursoNoEncontradoException;
 import com.smcapis.smcapis.services.interfaces.LiquidacionesService;
 import com.smcapis.smcapis.utiles.NumeroUtils;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,45 +32,67 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
     }
 
     @Override
-    public RespuestaLiquidacionDetalle obtenerDetalle(Integer rut, Integer dominioId, Integer anio, Integer mes, Integer procesoId, String comuna) {
-        RespuestaLiquidacionDetalle respuesta = llamarApi(rut, dominioId, anio, mes, procesoId, comuna);
+    public RespuestaLiquidacionDetalle obtenerDetalle(Integer rut, Integer dominioId, Integer anio, Integer mes, Integer procesoId) {
+        RespuestaLiquidacionDetalle respuesta = llamarApi(rut, dominioId, anio, mes, procesoId);
+        if (!esRespuestaValida(respuesta)) {
+            throw new RecursoNoEncontradoException("La busqueda no arrojo resultados.");
+        }
         return enriquecer(respuesta);
     }
 
     @Override
-    public RespuestaLiquidacionDetalle obtenerDetalleConsolidado(Integer rut, Integer dominioId, Integer anio, Integer mes, List<Integer> procesoIds, String comuna) {
-        List<RespuestaLiquidacionDetalle> respuestas = new ArrayList<>();
+    public RespuestaLiquidacionDetalle obtenerDetalleConsolidado(Integer rut, Integer dominioId, Integer anio, Integer mes, List<Integer> procesoIds) {
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<CompletableFuture<RespuestaLiquidacionDetalle>> futures = procesoIds.stream()
+                    .map(procesoId -> CompletableFuture.supplyAsync(
+                            () -> llamarApi(rut, dominioId, anio, mes, procesoId), executor))
+                    .toList();
 
-        for (Integer procesoId : procesoIds) {
-            RespuestaLiquidacionDetalle respuesta = llamarApi(rut, dominioId, anio, mes, procesoId, comuna);
-            if (respuesta != null) {
-                respuestas.add(respuesta);
+            List<RespuestaLiquidacionDetalle> respuestas = futures.stream()
+                    .map(f -> {
+                        try { return f.get(30, TimeUnit.SECONDS); }
+                        catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return null;
+                        } catch (Exception e) {
+                            return null;
+                        }
+                    })
+                    .filter(this::esRespuestaValida)
+                    .toList();
+
+            if (respuestas.isEmpty()) {
+                throw new RecursoNoEncontradoException("La busqueda no arrojo resultados.");
             }
-        }
 
-        if (respuestas.isEmpty()) {
-            return null;
+            return enriquecer(consolidar(respuestas));
         }
-
-        return enriquecer(consolidar(respuestas));
     }
 
-    private RespuestaLiquidacionDetalle llamarApi(Integer rut, Integer dominioId, Integer anio, Integer mes, Integer procesoId, String comuna) {
+    private boolean esRespuestaValida(RespuestaLiquidacionDetalle respuesta) {
+        return respuesta != null && respuesta.liquidacionId() > 0;
+    }
+
+    private RespuestaLiquidacionDetalle llamarApi(Integer rut, Integer dominioId, Integer anio, Integer mes, Integer procesoId) {
         String url = UriComponentsBuilder.fromUriString(configuracion.getBaseUrl() + "/detalle.ashx")
                 .queryParam("rut", rut)
                 .queryParam("dominio_id", dominioId)
                 .queryParam("anio", anio)
                 .queryParam("mes", mes)
                 .queryParam("proceso_id", procesoId)
-                .queryParam("COMUNA", comuna)
+                .queryParam("COMUNA", "LA_FLORIDA")
                 .toUriString();
 
-        return restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                RespuestaLiquidacionDetalle.class
-        ).getBody();
+        try {
+            return restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    RespuestaLiquidacionDetalle.class
+            ).getBody();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private RespuestaLiquidacionDetalle consolidar(List<RespuestaLiquidacionDetalle> respuestas) {

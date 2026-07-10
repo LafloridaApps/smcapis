@@ -24,12 +24,11 @@ public class LiquidacionesController {
             @RequestParam Integer anio,
             @RequestParam Integer mes,
             @RequestParam("proceso_id") List<Integer> procesoId,
-            @RequestParam String comuna,
             @RequestParam(defaultValue = "false") boolean consolidado) {
         if (consolidado) {
-            return ResponseEntity.ok(liquidacionesServicio.obtenerDetalleConsolidado(rut, dominioId, anio, mes, procesoId, comuna));
+            return ResponseEntity.ok(liquidacionesServicio.obtenerDetalleConsolidado(rut, dominioId, anio, mes, procesoId));
         }
-        return ResponseEntity.ok(liquidacionesServicio.obtenerDetalle(rut, dominioId, anio, mes, procesoId.getFirst(), comuna));
+        return ResponseEntity.ok(liquidacionesServicio.obtenerDetalle(rut, dominioId, anio, mes, procesoId.getFirst()));
     }
 
 }
