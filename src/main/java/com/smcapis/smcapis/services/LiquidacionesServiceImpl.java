@@ -6,18 +6,15 @@ import com.smcapis.smcapis.dto.RespuestaLiquidacionDetalle;
 import com.smcapis.smcapis.expections.RecursoNoEncontradoException;
 import com.smcapis.smcapis.services.interfaces.LiquidacionesService;
 import com.smcapis.smcapis.utiles.NumeroUtils;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,10 +22,12 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
 
     private final RestTemplate restTemplate;
     private final ConfiguracionLiquidaciones configuracion;
+    private final ObjectMapper objectMapper;
 
-    public LiquidacionesServiceImpl(RestTemplate restTemplate, ConfiguracionLiquidaciones configuracion) {
+    public LiquidacionesServiceImpl(RestTemplate restTemplate, ConfiguracionLiquidaciones configuracion, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.configuracion = configuracion;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -42,35 +41,24 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
 
     @Override
     public RespuestaLiquidacionDetalle obtenerDetalleConsolidado(Integer rut, Integer dominioId, Integer anio, Integer mes, List<Integer> procesoIds) {
-        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            List<CompletableFuture<RespuestaLiquidacionDetalle>> futures = procesoIds.stream()
-                    .map(procesoId -> CompletableFuture.supplyAsync(
-                            () -> llamarApi(rut, dominioId, anio, mes, procesoId), executor))
-                    .toList();
+        List<RespuestaLiquidacionDetalle> respuestas = new ArrayList<>();
 
-            List<RespuestaLiquidacionDetalle> respuestas = futures.stream()
-                    .map(f -> {
-                        try { return f.get(30, TimeUnit.SECONDS); }
-                        catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            return null;
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    })
-                    .filter(this::esRespuestaValida)
-                    .toList();
-
-            if (respuestas.isEmpty()) {
-                throw new RecursoNoEncontradoException("La busqueda no arrojo resultados.");
+        for (Integer procesoId : procesoIds) {
+            RespuestaLiquidacionDetalle respuesta = llamarApi(rut, dominioId, anio, mes, procesoId);
+            if (esRespuestaValida(respuesta)) {
+                respuestas.add(respuesta);
             }
-
-            return enriquecer(consolidar(respuestas));
         }
+
+        if (respuestas.isEmpty()) {
+            throw new RecursoNoEncontradoException("La busqueda no arrojo resultados.");
+        }
+
+        return enriquecer(consolidar(respuestas));
     }
 
     private boolean esRespuestaValida(RespuestaLiquidacionDetalle respuesta) {
-        return respuesta != null && respuesta.liquidacionId() > 0;
+        return respuesta != null;
     }
 
     private RespuestaLiquidacionDetalle llamarApi(Integer rut, Integer dominioId, Integer anio, Integer mes, Integer procesoId) {
@@ -84,12 +72,11 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
                 .toUriString();
 
         try {
-            return restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    null,
-                    RespuestaLiquidacionDetalle.class
-            ).getBody();
+            String json = restTemplate.getForObject(url, String.class);
+            if (json == null || json.contains("\"error\"")) {
+                return null;
+            }
+            return objectMapper.readValue(json, RespuestaLiquidacionDetalle.class);
         } catch (Exception e) {
             return null;
         }
