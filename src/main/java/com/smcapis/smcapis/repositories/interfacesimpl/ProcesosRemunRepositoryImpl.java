@@ -63,7 +63,8 @@ public class ProcesosRemunRepositoryImpl implements ProcesosRemunRepository {
                 rs.getInt("anoremun"),
                 rs.getInt("mesremun"),
                 rs.getString("descripcionproceso"),
-                rs.getInt("nroliq")
+                rs.getInt("nroliq"),
+                rs.getBoolean("LIQVISIBLEWEB")
 
         );
 
