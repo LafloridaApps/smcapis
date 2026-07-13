@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.smcapis.smcapis.dto.FuncionarioDto;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.repositories.interfaces.FuncionarioRespository;
+import com.smcapis.smcapis.utiles.FechaUtils;
 import com.smcapis.smcapis.utiles.FotoUtils;
 
 @Repository
@@ -76,10 +77,15 @@ public class FuncionarioRepositoryImpl implements FuncionarioRespository {
                 .escalafon(rs.getString("nombreescalafon"))
                 .fechainicioContrato(fechaInicio)
                 .fechafinContrato(fechaFin)
+                .vigente(estadoContrato(fechaFin))
                 .grado(rs.getInt("grado"))
                 .codDeptoExt(rs.getString("coddepto"))
                 .build();
 
+    }
+
+    private boolean estadoContrato(LocalDate fechaContrato) {
+        return fechaContrato == null || !fechaContrato.isBefore(FechaUtils.fechaActual());
     }
 
 }

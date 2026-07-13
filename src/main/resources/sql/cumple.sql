@@ -7,8 +7,8 @@ contratomes.ident,
 (select nombretipocontrato from RETIPOSCONTRATO tipos  where tipos.IDENT = contratomes.IDENT and tipos.CODTIPOCONTRATO = contratomes.CODTIPOCONTRATO) as tipocontrato,
 case when escala.grado is null then 0 else grado  end grado,
   nombreescalafon,
-  personas.FECHA_NACIMIENTO ,
-  case when (contratos.FECHAFIN >= convert(date,getdate(),104) or contratos.FECHAFIN  is null) then  1 else 0 end vigente  
+  personas.FECHA_NACIMIENTO,
+  contratos.FECHAFIN
 FROM
     RECONTRATOS AS contratos
     INNER JOIN RECONTRATOMES contratomes ON contratos.IDENT = contratomes.IDENT

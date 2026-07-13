@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.smcapis.smcapis.dto.FuncionarioDto;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.repositories.interfaces.CumpleRepository;
+import com.smcapis.smcapis.utiles.FechaUtils;
 import com.smcapis.smcapis.utiles.FotoUtils;
 
 import org.springframework.core.io.Resource;
@@ -62,6 +63,10 @@ public class CumpleRepositoryImpl implements CumpleRepository {
         Optional<LocalDate> fechaNacimiento = Optional.ofNullable(rs.getDate("fecha_nacimiento"))
                 .map(java.sql.Date::toLocalDate);
 
+        LocalDate fechaFin = Optional.ofNullable(rs.getDate("FECHAFIN"))
+                .map(java.sql.Date::toLocalDate)
+                .orElse(null);
+
         return FuncionarioDto.builder()
                 .rut(rs.getInt("rut"))
                 .vrut(rs.getString("vrut"))
@@ -76,9 +81,14 @@ public class CumpleRepositoryImpl implements CumpleRepository {
                 .tipoContrato(rs.getString("tipocontrato"))
                 .escalafon(rs.getString("nombreescalafon"))
                 .grado(rs.getInt("grado"))
-                .vigente(rs.getBoolean("vigente"))
+                .fechafinContrato(fechaFin)
+                .vigente(estadoContrato(fechaFin))
                 .build();
 
+    }
+
+    private boolean estadoContrato(LocalDate fechaContrato) {
+        return fechaContrato == null || !fechaContrato.isBefore(FechaUtils.fechaActual());
     }
 
 }

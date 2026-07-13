@@ -91,7 +91,7 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
     }
 
     private boolean estadoContrato(LocalDate fechaContrato) {
-        return fechaContrato == null || fechaContrato.isAfter(FechaUtils.fechaActual());
+        return fechaContrato == null || !fechaContrato.isBefore(FechaUtils.fechaActual());
     }
 
 }
