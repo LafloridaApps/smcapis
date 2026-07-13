@@ -58,6 +58,8 @@ public class FuncionarioRepositoryImpl implements FuncionarioRespository {
 
         byte[] imageBytes = rs.getBytes("foto");
         LocalDate fechaNacimiento = rs.getDate("fecha_nacimiento") != null ? rs.getDate("fecha_nacimiento").toLocalDate() : null;
+        LocalDate fechaInicio = rs.getDate("fechaini") != null ? rs.getDate("fechaini").toLocalDate() : null;
+        LocalDate fechaFin = rs.getDate("fechafin") != null ? rs.getDate("fechafin").toLocalDate() : null;
 
         return FuncionarioDto.builder()
                 .rut(rs.getInt("rut"))
@@ -72,6 +74,8 @@ public class FuncionarioRepositoryImpl implements FuncionarioRespository {
                 .fechaNacimiento(fechaNacimiento)
                 .tipoContrato(rs.getString("tipocontrato"))
                 .escalafon(rs.getString("nombreescalafon"))
+                .fechainicioContrato(fechaInicio)
+                .fechafinContrato(fechaFin)
                 .grado(rs.getInt("grado"))
                 .codDeptoExt(rs.getString("coddepto"))
                 .build();

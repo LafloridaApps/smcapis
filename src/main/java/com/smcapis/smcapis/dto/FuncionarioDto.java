@@ -22,7 +22,8 @@ public class FuncionarioDto {
     private String tipoContrato;
     private String escalafon;
     private int grado;
-    private LocalDate fechafin;
+    private LocalDate fechainicioContrato;
+    private LocalDate fechafinContrato;
     private boolean vigente;
     private LocalDate fechaNacimiento;
 

@@ -44,7 +44,9 @@ SELECT
         else grado
     end grado,
     nombreescalafon,
-    personas.fecha_nacimiento
+    personas.fecha_nacimiento,
+    contratos.FECHAINI,
+    contratos.FECHAFIN
 FROM
     RECONTRATOS AS contratos
     INNER JOIN RECONTRATOMES contratomes ON contratos.IDENT = contratomes.IDENT

@@ -62,6 +62,7 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
 
         byte[] imageBytes = rs.getBytes("foto");
         LocalDate fechaNacimiento = rs.getDate("fecha_nacimiento") != null ? rs.getDate("fecha_nacimiento").toLocalDate() : null;
+        LocalDate fechaInicio = rs.getDate("fechaini") != null ? rs.getDate("fechaini").toLocalDate() : null;
         LocalDate fechaFin = rs.getDate("fechafin") != null ? rs.getDate("fechafin").toLocalDate() : null;
 
 
@@ -79,7 +80,8 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
         .tipoContrato(rs.getString("tipocontrato"))
         .escalafon(rs.getString("nombreescalafon"))
         .grado(rs.getInt("grado"))
-        .fechafin(fechaFin)
+        .fechainicioContrato(fechaInicio)
+        .fechafinContrato(fechaFin)
         .vigente(estadoContrato(fechaFin))
         .fechaNacimiento(fechaNacimiento)
 
