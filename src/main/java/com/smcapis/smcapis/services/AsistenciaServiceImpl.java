@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.smcapis.smcapis.dto.AsistenciaDto;
+import com.smcapis.smcapis.dto.NewAsistenciaDto;
 import com.smcapis.smcapis.repositories.interfaces.AsistenciaRepository;
 import com.smcapis.smcapis.services.interfaces.AsistenciaService;
 
@@ -22,6 +23,12 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     public List<AsistenciaDto> getAsistenciaByRutAndIdent(Integer rut, Integer ident, LocalDate fechaInicio,
             LocalDate fechaFin) {
         return asistenciaRepository.getAsistenciaByRutAndIdent(rut, ident, fechaInicio, fechaFin);
+    }
+
+    @Override
+    public List<NewAsistenciaDto> getAsistenciaRut(Integer rut, Integer ident, LocalDate fechaInicio,
+            LocalDate fechaFin) {
+        return asistenciaRepository.obtenerAsistenciaRut(rut, ident, fechaInicio, fechaFin);
     }
 
 }

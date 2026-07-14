@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smcapis.smcapis.dto.AsistenciaDto;
+import com.smcapis.smcapis.dto.NewAsistenciaDto;
 import com.smcapis.smcapis.services.interfaces.AsistenciaService;
 
 import java.util.Map;
@@ -31,7 +31,7 @@ public class AsitenciaController {
 
         try {
 
-            List<AsistenciaDto> list = asistenciaService.getAsistenciaByRutAndIdent(rut, ident, fechaInicio, fechaFin);
+            List<NewAsistenciaDto> list = asistenciaService.getAsistenciaRut(rut, ident, fechaInicio, fechaFin);
             if (list.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(Map.of("message", "no se encontraron registros"));
