@@ -73,5 +73,4 @@ WHERE
             and r.ANOREMUN = YEAR(GETDATE())
     )
     AND contratos.FECHAINI <= CONVERT(date, GETDATE(), 104)
-    
     AND contratos.RUT = :rut

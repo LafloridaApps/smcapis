@@ -44,14 +44,10 @@ public class FuncionarioRepositoryImpl implements FuncionarioRespository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
 
-        try {
-            return namedParameterJdbcTemplate.queryForObject(sql,
-                    params,
-                    this::mapToFuncionarioDto);
-        } catch (EmptyResultDataAccessException e) {
-
-            throw new EmptyResultDataAccessException("No se encontró funcionario con rut: " + rut, 1);
-        }
+        return namedParameterJdbcTemplate.query(sql,
+                params,
+                this::mapToFuncionarioDto).stream().findFirst()
+                .orElseThrow(() -> new EmptyResultDataAccessException("No se encontró funcionario con rut: " + rut, 1));
 
     }
 

@@ -79,3 +79,6 @@ WHERE
         OR contratos.fechafin >= CONVERT(date, GETDATE(), 104)
     )
     AND contratos.RUT = :rut
+ORDER BY
+    CASE WHEN contratomes.ident = 1 THEN 0 ELSE 1 END,
+    contratos.FECHAINI DESC
