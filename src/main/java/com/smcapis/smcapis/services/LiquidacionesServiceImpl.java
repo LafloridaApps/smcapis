@@ -92,7 +92,6 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
         int totalImpPrevisional = 0;
         int totalImpSalud = 0;
         int sueldoLiquido = 0;
-        int diasTrabajados = 0;
 
         for (RespuestaLiquidacionDetalle res : respuestas) {
             totalHaberes += res.totalHaberes();
@@ -101,7 +100,6 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
             totalImpPrevisional += res.totalImpPrevisional();
             totalImpSalud += res.totalImpSalud();
             sueldoLiquido += res.sueldoLiquido();
-            diasTrabajados += res.diasTrabajados();
 
             if (res.detalle() != null) {
                 for (ItemLiquidacion item : res.detalle()) {
@@ -149,7 +147,7 @@ public class LiquidacionesServiceImpl implements LiquidacionesService {
                 totalImpPrevisional,
                 totalImpSalud,
                 sueldoLiquido,
-                diasTrabajados,
+                primera.diasTrabajados(),
                 primera.cotizPactadaIsapre(),
                 primera.porcentajeImp(),
                 primera.fechaAntiguedad(),
