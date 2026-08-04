@@ -2,7 +2,8 @@ SELECT
     lmlicencias.fechaini,
     DATEADD(day, DIASLIC -1, lmlicencias.FECHAINI) AS termino,
     lmlicencias.ident,
-    lmlicencias.rut
+    lmlicencias.rut,
+    recontratomes.depto
 FROM
     lmlicencias
     INNER JOIN refuncionarios ON refuncionarios.IDENT = LMLICENCIAS.IDENT

@@ -13,6 +13,7 @@ public class AusenciasLicenciasFuncioanarioDto {
     private LocalDate fechaTermino;
     private int ident;
     private Integer rut;
+    private String depto;
 
     public LocalDate getFechaInicio() {
         return fechaInicio;

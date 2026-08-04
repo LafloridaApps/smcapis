@@ -64,6 +64,7 @@ public class LicenciasEntreFechasRepositoryImpl implements LicenciasEntreFechasR
                 .fechaTermino(rs.getDate("termino").toLocalDate())
                 .ident(rs.getInt("ident"))
                 .rut(rs.getInt("rut"))
+                .depto(rs.getString("depto"))
                 .build();
 
     }
