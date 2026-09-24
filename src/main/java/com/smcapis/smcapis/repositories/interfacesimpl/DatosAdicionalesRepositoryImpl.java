@@ -10,7 +10,7 @@ import java.util.Map;
 
 import com.smcapis.smcapis.dto.ArticuloDatosAdicionales;
 import com.smcapis.smcapis.expections.FileException;
-import com.smcapis.smcapis.repositories.interfaces.DatosAdicionalesService;
+import com.smcapis.smcapis.repositories.interfaces.DatosAdicionalesRepository;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -22,19 +22,22 @@ import org.springframework.stereotype.Repository;
 import com.smcapis.smcapis.utiles.UtilsHelper;
 
 @Repository
-public class DatosAdicionalesServiceImpl implements DatosAdicionalesService {
+public class DatosAdicionalesRepositoryImpl implements DatosAdicionalesRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private String sql;
+    private String sqlDetalle;
 
-    public DatosAdicionalesServiceImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+    public DatosAdicionalesRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
             ResourceLoader resourceLoader) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 
         try {
             Resource resource = resourceLoader.getResource("classpath:sql/datosadicionalesarticulo.sql");
+            Resource resourceDetalle = resourceLoader.getResource("classpath:sql/datosadicionales.sql");
             this.sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            this.sqlDetalle = new String(resourceDetalle.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new FileException("Error al leer el archivo SQL");
         }
@@ -70,6 +73,20 @@ public class DatosAdicionalesServiceImpl implements DatosAdicionalesService {
 
         );
 
+    }
+
+    @Override
+    public List<ArticuloDatosAdicionales> getAdicionalesByCodInv(Integer correlativo) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("codinv", correlativo);
+        try {
+            return namedParameterJdbcTemplate.query(sqlDetalle,
+                    params,
+                    this::mapToDto);
+        } catch (EmptyResultDataAccessException e) {
+
+            return new ArrayList<>();
+        }
     }
 
 }

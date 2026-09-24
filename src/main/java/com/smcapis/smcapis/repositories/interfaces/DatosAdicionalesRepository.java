@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.smcapis.smcapis.dto.ArticuloDatosAdicionales;
 
-public interface DatosAdicionalesService {
+public interface DatosAdicionalesRepository {
 
     List<ArticuloDatosAdicionales> getAdicionalesByCodigo(String codigo, Integer correlativo);
+
+    List<ArticuloDatosAdicionales> getAdicionalesByCodInv(Integer correlativo);
 
 }

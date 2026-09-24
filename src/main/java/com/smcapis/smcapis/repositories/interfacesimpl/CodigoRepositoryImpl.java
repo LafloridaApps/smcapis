@@ -58,7 +58,8 @@ public class CodigoRepositoryImpl implements CodigoRepository {
             return null; // Es el comportamiento esperado si no se encuentran registros
         } catch (Exception e) {
             logger.error("Error al buscar código {}", codigo, e);
-            return null;
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_GATEWAY, "No se pudo consultar el código", e);
         }
     }
 

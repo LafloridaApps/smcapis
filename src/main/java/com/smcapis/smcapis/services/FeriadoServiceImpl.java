@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.smcapis.smcapis.dto.ResumenFeriadoLegal;
 import com.smcapis.smcapis.repositories.interfaces.FeriadoRepository;
 import com.smcapis.smcapis.services.interfaces.FeriadosService;
+import com.smcapis.smcapis.utiles.FechaUtils;
 
 @Service
 public class FeriadoServiceImpl implements FeriadosService {
@@ -24,7 +25,7 @@ public class FeriadoServiceImpl implements FeriadosService {
         // 2. Buscamos el año 2026 específicamente (o el primero que encuentres si
         // prefieres)
         ResumenFeriadoLegal resumenFeriado = listaResumenes.stream()
-                .filter(r -> r.getAnio() != null && r.getAnio().equals(2026))
+                .filter(r -> r.getAnio() != null && r.getAnio().equals(FechaUtils.fechaActual().getYear()))
                 .findFirst()
                 .orElseGet(() -> !listaResumenes.isEmpty() ? listaResumenes.get(0) : new ResumenFeriadoLegal());
 

@@ -8,30 +8,23 @@ import org.springframework.stereotype.Component;
 import com.smcapis.smcapis.dto.ArticuloResponse;
 import com.smcapis.smcapis.utiles.UtilsHelper;
 import com.smcapis.smcapis.dto.ArticuloDatosAdicionales;
-import com.smcapis.smcapis.repositories.interfaces.DatosAdicionalesService;
+import com.smcapis.smcapis.repositories.interfaces.DatosAdicionalesRepository;
 
 @Component
 public class ArticuloMapper {
 
-    private final DatosAdicionalesService datosAdicionales;
+    private final DatosAdicionalesRepository datosAdicionales;
 
-    public ArticuloMapper(DatosAdicionalesService datosAdicionales) {
+    public ArticuloMapper(DatosAdicionalesRepository datosAdicionales) {
         this.datosAdicionales = datosAdicionales;
     }
 
     public ArticuloResponse mapToArticuloResponse(ResultSet rs, int rowNum)
             throws SQLException {
 
-        String codigoGrupo = rs.getString("codgrupoart");
-        String codSubGrupoArt = rs.getString("codsubgrupoart");
-        String codRubroArt = rs.getString("codrubroart");
-        String codArt = rs.getString("codart");
         String codInv = rs.getString("codinv");
 
-        String cadena = codigoGrupo.concat(codSubGrupoArt).concat(codRubroArt).concat(codArt);
-
-        List<ArticuloDatosAdicionales> adicionales = datosAdicionales.getAdicionalesByCodigo(cadena,
-                Integer.parseInt(codInv));
+        List<ArticuloDatosAdicionales> adicionales = datosAdicionales.getAdicionalesByCodInv(Integer.parseInt(codInv));
 
         return new ArticuloResponse(
                 rowNum,
@@ -58,12 +51,11 @@ public class ArticuloMapper {
                 rs.getString("responsableoficina"),
                 rs.getString("cargooficina"),
                 rs.getString("nombreart"),
-                adicionales
+                adicionales,
+                rs.getString("DESCMAEINV")
 
         );
 
     }
-
-   
 
 }

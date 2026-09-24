@@ -28,7 +28,8 @@ public record ArticuloResponse(
         String responsable,
         String cargo,
         String nombreArticulo,
-        List<ArticuloDatosAdicionales> datosAdicionales
+        List<ArticuloDatosAdicionales> datosAdicionales,
+        String descmaeinv
 
 ) {
 

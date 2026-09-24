@@ -7,7 +7,8 @@ select
 from
     adarticulos
 where
-    CODGRUPOART = :codgrupoart
+    idadquis = 1
+    and CODGRUPOART = :codgrupoart
     and CODSUBGRUPOART = :codsubgrupoart
     and CODRUBROART = :codrubroart
     and CODART = :codart

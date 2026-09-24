@@ -17,7 +17,11 @@ public class CodigoServiceImpl implements CodigoService {
 
     @Override
     public CodigoResponse obtenerCodigoInventario(String codigo) {
-        return codigoRepository.getCodigo(codigo);
+        if (codigo == null || !codigo.trim().matches("\\d{8}")) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "El código debe tener 8 dígitos");
+        }
+        return codigoRepository.getCodigo(codigo.trim());
     }
 
 }
