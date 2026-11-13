@@ -44,7 +44,7 @@ public class LiquidacionMapper {
             if (res.detalle() != null) {
                 for (ItemLiquidacion item : res.detalle()) {
                     // Se descartan los DESCUENTO cuyo codigo ya viene como HABER (ej: HRS.EXT.)
-                    if ("DESCUENTO".equals(item.tipo()) && codigosHaberes.contains(item.codigo())) {
+                    if ("DESCUENTO".equals(item.tipo()) && codigosHaberes.contains(item.codigo()) && item.nombre().contains("HRS.EXT") ) {
                         continue;
                     }
                     fusionarItem(mapaItems, item);

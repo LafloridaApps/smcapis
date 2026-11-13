@@ -44,6 +44,7 @@ SELECT
         else grado
     end grado,
     nombreescalafon,
+    contratos.FECHAINI ,
     contratos.fechafin,
     personas.fecha_nacimiento
 FROM
