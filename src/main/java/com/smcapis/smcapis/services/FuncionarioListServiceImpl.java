@@ -1,6 +1,6 @@
 package com.smcapis.smcapis.services;
 
-import com.smcapis.smcapis.dto.FuncionarioDto;
+import com.smcapis.smcapis.dto.FuncionarioContratoResponse;
 import com.smcapis.smcapis.repositories.interfaces.FuncionarioListRepository;
 import com.smcapis.smcapis.services.interfaces.FuncionarioListService;
 import java.util.List;
@@ -17,7 +17,7 @@ public class FuncionarioListServiceImpl implements FuncionarioListService {
     }
 
     @Override
-    public List<FuncionarioDto> getFuncionario(Integer rut) {
+    public List<FuncionarioContratoResponse> getFuncionario(Integer rut) {
         return funcionarioListRepository.getFuncionario(rut);
     }
 

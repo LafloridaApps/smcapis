@@ -46,7 +46,9 @@ SELECT
     nombreescalafon,
     contratos.FECHAINI ,
     contratos.fechafin,
-    personas.fecha_nacimiento
+    personas.fecha_nacimiento,
+    contratos.numresolcontr,
+    contratos.obs_adicional_cont
 FROM
     RECONTRATOS AS contratos
     INNER JOIN RECONTRATOMES contratomes ON contratos.IDENT = contratomes.IDENT

@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.smcapis.smcapis.dto.FuncionarioDto;
+import com.smcapis.smcapis.dto.FuncionarioContratoResponse;
 import com.smcapis.smcapis.expections.FileException;
 import com.smcapis.smcapis.repositories.interfaces.FuncionarioListRepository;
 import com.smcapis.smcapis.utiles.FechaUtils;
@@ -41,14 +41,14 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
     }
 
     @Override
-    public List<FuncionarioDto> getFuncionario(Integer rut) {
+    public List<FuncionarioContratoResponse> getFuncionario(Integer rut) {
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("rut", rut);
 
-        List<FuncionarioDto> funcionarios = namedParameterJdbcTemplate.query(sql,
+        List<FuncionarioContratoResponse> funcionarios = namedParameterJdbcTemplate.query(sql,
                 params,
-                this::mapToFuncionarioDto);
+                this::mapToFuncionarioContratoResponse);
 
         if (funcionarios.isEmpty()) {
             throw new EmptyResultDataAccessException("No se encontró funcionario con rut: " + rut, 1);
@@ -58,7 +58,7 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
 
     }
 
-    private FuncionarioDto mapToFuncionarioDto(ResultSet rs, int row) throws SQLException {
+    private FuncionarioContratoResponse mapToFuncionarioContratoResponse(ResultSet rs, int row) throws SQLException {
 
         byte[] imageBytes = rs.getBytes("foto");
         LocalDate fechaNacimiento = rs.getDate("fecha_nacimiento") != null ? rs.getDate("fecha_nacimiento").toLocalDate() : null;
@@ -66,26 +66,14 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
         LocalDate fechaFin = rs.getDate("fechafin") != null ? rs.getDate("fechafin").toLocalDate() : null;
 
 
-        return FuncionarioDto.builder()
-        .rut(rs.getInt("rut"))
-        .vrut(rs.getString("vrut"))
-        .email(rs.getString("email"))
-        .paterno(rs.getString("apellidopaterno"))
-        .materno(rs.getString("apellidomaterno"))
-        .nombres(rs.getString("nombres"))
-        .codDeptoExt(rs.getString("coddepto"))
-        .foto(imageBytes != null ? FotoUtils.fotoConverter(imageBytes) : " ")
-        .departamento(rs.getString("departamento"))
-        .ident(rs.getInt("ident"))
-        .tipoContrato(rs.getString("tipocontrato"))
-        .escalafon(rs.getString("nombreescalafon"))
-        .grado(rs.getInt("grado"))
-        .fechainicioContrato(fechaInicio)
-        .fechafinContrato(fechaFin)
-        .vigente(estadoContrato(fechaFin))
-        .fechaNacimiento(fechaNacimiento)
-
-        .build();
+        return new FuncionarioContratoResponse(
+                rs.getInt("rut"), rs.getString("vrut"), rs.getString("apellidopaterno"),
+                rs.getString("apellidomaterno"), rs.getString("email"), rs.getString("coddepto"),
+                rs.getString("nombres"), imageBytes != null ? FotoUtils.fotoConverter(imageBytes) : " ",
+                rs.getString("departamento"), rs.getInt("ident"), rs.getString("tipocontrato"),
+                rs.getString("nombreescalafon"), rs.getInt("grado"), fechaInicio, fechaFin,
+                estadoContrato(fechaFin), fechaNacimiento,
+                rs.getString("numresolcontr"), rs.getString("obs_adicional_cont"));
 
 
     }
