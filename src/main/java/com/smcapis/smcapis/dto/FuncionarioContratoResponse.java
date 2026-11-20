@@ -9,5 +9,8 @@ public record FuncionarioContratoResponse(Integer rut, String vrut, String pater
         String tipoContrato, String escalafon, int grado, LocalDate fechainicioContrato,
         LocalDate fechafinContrato, boolean vigente, LocalDate fechaNacimiento,
         @JsonProperty("numresolcontr") String numResolContr,
-        @JsonProperty("obs_adicional_cont") String obsAdicionalCont) {
+        @JsonProperty("obs_adicional_cont") String obsAdicionalCont,
+        @JsonProperty("lincontrato") Integer linContrato,
+        @JsonProperty("fecharesolcontr") LocalDate fechaResolContr,
+        @JsonProperty("denominacion_dominio") String denominacionDominio) {
 }

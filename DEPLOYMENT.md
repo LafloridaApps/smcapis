@@ -4,6 +4,20 @@ Ejecutar únicamente por instrucción explícita del usuario («sube smcapis a d
 
 ## Desarrollo
 
+- Script dedicado al servidor `192.168.10.45`: `./deploy-desarrollo.sh`.
+  Envía el código actual (incluidos cambios sin commit) con verificación SHA-256,
+  construye la imagen en el servidor con una etiqueta única y ejecuta
+  `deploy-runtime.sh` usando el `.env` remoto. El paquete incluye únicamente
+  los archivos de construcción, `src` y el script de activación; excluye el
+  `.env` local, `target` y el historial Git.
+  Al superar la comprobación de salud, actualiza `smcapis:latest` en el servidor.
+  No requiere Docker local. Requiere Docker, curl, tar y sha256sum remotos.
+  La construcción usa el Dockerfile multietapa y omite los tests Maven.
+  SSH solicita la
+  contraseña del usuario `desarrollo` si no hay autenticación por clave.
+  No inicia contenedores locales. Conserva los archivos y el contenedor anterior.
+- Las indicaciones siguientes describen el flujo anterior; para este destino
+  se debe utilizar el script dedicado indicado arriba.
 - Proyecto backend: `/home/mirko/Documentos/Fuentes/smcapis`.
 - Comando: `./deploy.sh desarrollo`.
 - Destino SSH: `desarrollo@desarrollo`; `/etc/hosts` resuelve `desarrollo` a `192.168.10.45`.

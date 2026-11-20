@@ -48,7 +48,10 @@ SELECT
     contratos.fechafin,
     personas.fecha_nacimiento,
     contratos.numresolcontr,
-    contratos.obs_adicional_cont
+    contratos.obs_adicional_cont,
+    contratos.LINCONTRATO AS lincontrato,
+    contratos.FECHARESOLCONTR AS fecharesolcontr,
+    'denominacion_dominio'=(select denominacion from dominios where cod_sistema='re' and cod_dominio=contratos.ident)
 FROM
     RECONTRATOS AS contratos
     INNER JOIN RECONTRATOMES contratomes ON contratos.IDENT = contratomes.IDENT

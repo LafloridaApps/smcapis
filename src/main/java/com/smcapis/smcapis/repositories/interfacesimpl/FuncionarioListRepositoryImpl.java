@@ -65,6 +65,7 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
         LocalDate fechaInicio = rs.getDate("fechaini") != null ? rs.getDate("fechaini").toLocalDate() : null;
         LocalDate fechaFin = rs.getDate("fechafin") != null ? rs.getDate("fechafin").toLocalDate() : null;
 
+        var fechaResolContr = rs.getDate("fecharesolcontr");
 
         return new FuncionarioContratoResponse(
                 rs.getInt("rut"), rs.getString("vrut"), rs.getString("apellidopaterno"),
@@ -73,7 +74,10 @@ public class FuncionarioListRepositoryImpl implements FuncionarioListRepository 
                 rs.getString("departamento"), rs.getInt("ident"), rs.getString("tipocontrato"),
                 rs.getString("nombreescalafon"), rs.getInt("grado"), fechaInicio, fechaFin,
                 estadoContrato(fechaFin), fechaNacimiento,
-                rs.getString("numresolcontr"), rs.getString("obs_adicional_cont"));
+                rs.getString("numresolcontr"), rs.getString("obs_adicional_cont"),
+                rs.getObject("lincontrato", Integer.class),
+                fechaResolContr == null ? null : fechaResolContr.toLocalDate(),
+                rs.getString("denominacion_dominio"));
 
 
     }
